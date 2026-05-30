@@ -1,680 +1,1679 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
   <title>THE SUPERMARKET</title>
-
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: Arial, sans-serif;
+    :root {
+      --bg: #0a0a0a;
+      --surface: #141414;
+      --surface2: #1e1e1e;
+      --border: rgba(255,255,255,0.08);
+      --accent: #f0e040;
+      --accent2: #ff6b35;
+      --text: #f5f5f0;
+      --text-dim: rgba(245,245,240,0.5);
+      --floor: #e8e4dc;
+      --floor-line: rgba(0,0,0,0.09);
+      --shelf-wood: #c8a86b;
+      --shelf-dark: #8b6835;
+      --wall-color: #2a2a28;
+      --tile: 80px;
+      --radius: 16px;
+      --shadow: 0 8px 32px rgba(0,0,0,0.5);
     }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
       overflow: hidden;
-      background: #050505;
-      color: white;
+      height: 100vh;
+      width: 100vw;
+      cursor: default;
+      user-select: none;
     }
 
+    /* ── LOADING ── */
     #loading {
-      position: fixed;
-      inset: 0;
-      background: #050505;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      z-index: 50;
+      position: fixed; inset: 0;
+      background: var(--bg);
+      display: flex; flex-direction: column;
+      justify-content: center; align-items: center;
+      z-index: 100;
+      gap: 32px;
     }
-
-    #loading h1 {
-      font-size: 38px;
-      letter-spacing: 4px;
-      margin-bottom: 25px;
+    .load-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(36px, 8vw, 72px);
+      letter-spacing: 0.18em;
+      color: var(--text);
     }
-
-    .bar {
-      width: 280px;
-      height: 12px;
-      border: 1px solid white;
-      border-radius: 20px;
+    .load-logo span { color: var(--accent); }
+    .load-sub {
+      font-size: 11px;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+    .load-bar-wrap {
+      width: clamp(220px, 40vw, 340px);
+      height: 3px;
+      background: var(--surface2);
+      border-radius: 2px;
       overflow: hidden;
     }
-
-    .fill {
-      width: 0%;
+    .load-bar-fill {
       height: 100%;
-      background: white;
-      animation: load 3s forwards;
+      background: var(--accent);
+      width: 0%;
+      border-radius: 2px;
+      animation: loadAnim 2.8s cubic-bezier(.4,0,.2,1) forwards;
+    }
+    @keyframes loadAnim { 0%{width:0%} 60%{width:72%} 85%{width:90%} 100%{width:100%} }
+    .load-pct {
+      font-size: 12px;
+      letter-spacing: 0.2em;
+      color: var(--text-dim);
     }
 
-    @keyframes load {
-      to { width: 100%; }
-    }
-
+    /* ── INTRO ── */
     #intro {
       display: none;
-      position: fixed;
-      inset: 0;
-      background: radial-gradient(circle, #202020, #000);
-      z-index: 40;
+      position: fixed; inset: 0;
+      background: var(--bg);
+      z-index: 90;
       flex-direction: column;
       justify-content: center;
       align-items: center;
+      gap: 0;
+      overflow: hidden;
     }
-
-    #intro h1 {
-      font-size: 48px;
-      letter-spacing: 5px;
-      margin-bottom: 15px;
+    .intro-grid {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 60px 60px;
+      mask-image: radial-gradient(ellipse 70% 70% at 50% 50%, black 30%, transparent 100%);
     }
-
-    #intro p {
-      margin-bottom: 30px;
-      color: #ccc;
+    .intro-content {
+      position: relative;
+      text-align: center;
+      display: flex; flex-direction: column; align-items: center; gap: 24px;
     }
-
-    #intro button {
-      padding: 15px 45px;
-      font-size: 20px;
+    .intro-eyebrow {
+      font-size: 11px;
+      letter-spacing: 0.45em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+    .intro-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(52px, 14vw, 120px);
+      letter-spacing: 0.12em;
+      line-height: 0.9;
+      color: var(--text);
+    }
+    .intro-title .highlight { color: var(--accent); }
+    .intro-desc {
+      font-size: 15px;
+      color: var(--text-dim);
+      max-width: 380px;
+      line-height: 1.6;
+    }
+    .intro-enter {
+      margin-top: 12px;
+      padding: 18px 60px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      background: var(--accent);
+      color: #0a0a0a;
       border: none;
-      border-radius: 30px;
+      border-radius: 50px;
       cursor: pointer;
-      background: white;
-      color: black;
-      font-weight: bold;
+      transition: transform 0.15s, box-shadow 0.15s;
     }
+    .intro-enter:hover { transform: scale(1.04); box-shadow: 0 0 40px rgba(240,224,64,0.3); }
 
+    /* ── GAME ── */
     #game {
       display: none;
       width: 100vw;
       height: 100vh;
       position: relative;
-      background: #111;
+      overflow: hidden;
     }
 
+    /* ── STORE ── */
     #store {
       position: absolute;
-      width: 2300px;
-      height: 1500px;
-      background:
-        linear-gradient(90deg, #d0d0d0 1px, transparent 1px),
-        linear-gradient(#d0d0d0 1px, transparent 1px),
-        #e7e7e7;
-      background-size: 80px 80px;
+      width: 2600px;
+      height: 1700px;
       transform-origin: top left;
+      will-change: transform;
+      transition: transform 0.06s linear;
     }
 
+    /* Floor */
+    .floor-base {
+      position: absolute;
+      inset: 0;
+      background: var(--floor);
+    }
+    .floor-tiles {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(var(--floor-line) 1px, transparent 1px),
+        linear-gradient(90deg, var(--floor-line) 1px, transparent 1px);
+      background-size: var(--tile) var(--tile);
+    }
+    .floor-accent {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(45deg, rgba(0,0,0,0.015) 25%, transparent 25%),
+        linear-gradient(-45deg, rgba(0,0,0,0.015) 25%, transparent 25%);
+      background-size: calc(var(--tile)*2) calc(var(--tile)*2);
+    }
+
+    /* Walls */
     .wall {
       position: absolute;
-      background: #333;
-      z-index: 2;
+      background: var(--wall-color);
+      z-index: 5;
     }
+    .wall-top    { left:0; top:0; width:2600px; height:55px; }
+    .wall-bottom { left:0; bottom:0; width:2600px; height:55px; }
+    .wall-left   { left:0; top:0; width:55px; height:1700px; }
+    .wall-right  { right:0; top:0; width:55px; height:1700px; }
 
-    .top-wall { left: 0; top: 0; width: 2300px; height: 45px; }
-    .bottom-wall { left: 0; bottom: 0; width: 2300px; height: 45px; }
-    .left-wall { left: 0; top: 0; width: 45px; height: 1500px; }
-    .right-wall { right: 0; top: 0; width: 45px; height: 1500px; }
+    /* Wall decoration stripe */
+    .wall-stripe {
+      position: absolute; z-index: 6;
+      background: var(--accent);
+      opacity: 0.6;
+    }
+    .ws-top    { left:55px; top:48px; width:2490px; height:4px; }
+    .ws-bottom { left:55px; bottom:48px; width:2490px; height:4px; }
+    .ws-left   { left:48px; top:55px; width:4px; height:1590px; }
+    .ws-right  { right:48px; top:55px; width:4px; height:1590px; }
 
+    /* Entrance */
     #entrance {
       position: absolute;
-      left: 930px;
-      top: 1370px;
-      width: 380px;
-      height: 80px;
-      background: #111;
-      border: 4px solid white;
-      border-radius: 18px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 26px;
-      font-weight: bold;
-      z-index: 3;
-    }
-
-    .section-title {
-      position: absolute;
-      color: #222;
+      left: 1080px; top: 1570px;
+      width: 440px; height: 75px;
+      background: var(--bg);
+      border: 3px solid rgba(255,255,255,0.2);
+      border-radius: 0 0 20px 20px;
+      display: flex; justify-content: center; align-items: center;
+      font-family: 'Bebas Neue', sans-serif;
       font-size: 22px;
-      font-weight: bold;
+      letter-spacing: 0.18em;
+      color: var(--text-dim);
+      z-index: 6;
     }
-
-    .shelf {
+    .entrance-arrow {
       position: absolute;
-      width: 330px;
-      height: 95px;
-      background: #8b5a2b;
-      border: 5px solid #5a3517;
-      border-radius: 14px;
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      z-index: 3;
-      box-shadow: 0 8px 15px rgba(0,0,0,0.25);
-    }
-
-    .shelf::before {
-      content: attr(data-name);
-      position: absolute;
-      top: -34px;
-      left: 0;
-      width: 100%;
-      text-align: center;
-      color: #111;
-      font-weight: bold;
-      font-size: 18px;
-    }
-
-    .product {
-      width: 52px;
-      height: 52px;
-      border-radius: 12px;
-      background: white;
-      color: black;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 28px;
-      cursor: pointer;
-      transition: 0.2s;
-      box-shadow: 0 3px 8px rgba(0,0,0,.25);
-    }
-
-    .product:hover {
-      transform: scale(1.18);
-    }
-
-    .aisle {
-      position: absolute;
-      color: #777;
-      font-size: 16px;
-      font-weight: bold;
-      letter-spacing: 2px;
-    }
-
-    #player {
-      position: absolute;
-      width: 52px;
-      height: 52px;
-      border-radius: 50%;
-      background: #111;
-      border: 4px solid white;
-      z-index: 8;
-      box-shadow: 0 0 12px rgba(0,0,0,0.6);
-    }
-
-    #player::after {
-      content: "👤";
-      position: absolute;
-      left: 8px;
-      top: 8px;
-      font-size: 26px;
-    }
-
-    #cartIcon {
-      position: absolute;
-      width: 55px;
-      height: 38px;
-      background: silver;
-      border: 3px solid #333;
-      border-radius: 9px;
-      z-index: 7;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 22px;
-    }
-
-    #checkout {
-      position: absolute;
-      left: 1830px;
-      top: 1120px;
-      width: 330px;
-      height: 180px;
-      background: #111;
-      border: 5px solid #fff;
-      border-radius: 18px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 30px;
-      font-weight: bold;
+      left: 1180px; top: 1540px;
+      width: 240px; height: 30px;
+      background: rgba(240,224,64,0.08);
+      border: 1px dashed rgba(240,224,64,0.25);
       z-index: 4;
-      box-shadow: 0 10px 25px rgba(0,0,0,.4);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; letter-spacing: 0.1em;
+      color: rgba(240,224,64,0.35);
     }
 
-    #hud {
-      position: fixed;
-      top: 15px;
-      left: 15px;
-      background: rgba(0,0,0,.78);
-      padding: 15px;
-      border-radius: 15px;
-      z-index: 20;
-      width: 280px;
-      max-height: 320px;
+    /* Aisle dividers */
+    .aisle-line {
+      position: absolute;
+      background: rgba(0,0,0,0.06);
+      z-index: 2;
+    }
+    .aisle-label {
+      position: absolute;
+      font-size: 11px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: rgba(0,0,0,0.2);
+      z-index: 3;
     }
 
-    #hud h2 {
-      margin-bottom: 10px;
-      font-size: 20px;
+    /* Section headers */
+    .section-header {
+      position: absolute;
+      z-index: 4;
+      display: flex; flex-direction: column; gap: 4px;
     }
-
-    #cartList {
-      font-size: 14px;
-      margin-top: 10px;
-      max-height: 190px;
-      overflow-y: auto;
-      line-height: 1.5;
-    }
-
-    #minimap {
-      position: fixed;
-      top: 15px;
-      right: 15px;
-      background: rgba(0,0,0,.78);
-      border-radius: 15px;
-      padding: 12px;
-      z-index: 20;
-      width: 180px;
-      font-size: 13px;
-    }
-
-    #minimap h3 {
-      margin-bottom: 8px;
+    .section-header .sh-emoji { font-size: 26px; }
+    .section-header .sh-name {
+      font-family: 'Bebas Neue', sans-serif;
       font-size: 15px;
+      letter-spacing: 0.2em;
+      color: rgba(0,0,0,0.45);
     }
 
-    #controls {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      z-index: 25;
-      display: grid;
-      grid-template-columns: repeat(3, 58px);
+    /* Shelves */
+    .shelf-unit {
+      position: absolute;
+      z-index: 4;
+    }
+    .shelf-body {
+      background: linear-gradient(180deg, #d4a96a 0%, #c8984f 40%, #b8832f 100%);
+      border-radius: 12px;
+      border: 3px solid var(--shelf-dark);
+      box-shadow:
+        inset 0 2px 0 rgba(255,255,255,0.25),
+        inset 0 -2px 0 rgba(0,0,0,0.25),
+        0 6px 20px rgba(0,0,0,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: space-evenly;
+      padding: 0 14px;
+      position: relative;
+      overflow: visible;
+    }
+    .shelf-body::after {
+      content: '';
+      position: absolute;
+      bottom: -8px; left: 8px; right: 8px;
+      height: 8px;
+      background: rgba(0,0,0,0.2);
+      border-radius: 0 0 8px 8px;
+      filter: blur(4px);
+    }
+
+    /* Products on shelf */
+    .product-slot {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      transition: transform 0.15s;
+      position: relative;
+    }
+    .product-slot:hover { transform: translateY(-6px); }
+    .product-icon {
+      width: 56px; height: 56px;
+      background: white;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 30px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      border: 2px solid rgba(255,255,255,0.8);
+    }
+    .product-price-tag {
+      font-size: 10px;
+      font-weight: 600;
+      color: white;
+      background: rgba(0,0,0,0.5);
+      padding: 1px 5px;
+      border-radius: 4px;
+      letter-spacing: 0.05em;
+    }
+
+    /* Shelf label */
+    .shelf-label {
+      position: absolute;
+      top: -32px; left: 0; right: 0;
+      text-align: center;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      color: rgba(0,0,0,0.5);
+      text-transform: uppercase;
+    }
+
+    /* Double-sided shelves (center aisles) */
+    .shelf-double {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* Checkout area */
+    #checkout-area {
+      position: absolute;
+      left: 2090px; top: 1250px;
+      width: 360px; height: 220px;
+      background: var(--wall-color);
+      border: 3px solid rgba(255,255,255,0.15);
+      border-radius: 20px;
+      z-index: 5;
+      overflow: hidden;
+      cursor: pointer;
+      transition: border-color 0.2s;
+    }
+    #checkout-area:hover { border-color: var(--accent); }
+    .checkout-inner {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
       gap: 8px;
     }
-
-    .ctrl {
-      width: 58px;
-      height: 58px;
-      border-radius: 14px;
-      border: none;
-      background: rgba(0,0,0,.78);
-      color: white;
-      font-size: 25px;
-      cursor: pointer;
+    .checkout-icon { font-size: 42px; }
+    .checkout-label {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 22px;
+      letter-spacing: 0.2em;
+      color: var(--text);
+    }
+    .checkout-sub {
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      color: var(--text-dim);
+    }
+    .checkout-stripe {
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 4px;
+      background: var(--accent);
     }
 
+    /* Refrigerated section */
+    .fridge-unit {
+      position: absolute;
+      background: linear-gradient(180deg, #1a3a5c, #0d2438);
+      border: 3px solid #2a5a8c;
+      border-radius: 12px;
+      z-index: 4;
+      box-shadow: 0 0 20px rgba(42,120,200,0.2), inset 0 0 30px rgba(100,180,255,0.05);
+      overflow: visible;
+    }
+    .fridge-unit::before {
+      content: '';
+      position: absolute;
+      inset: 4px;
+      background: linear-gradient(180deg,
+        rgba(100,180,255,0.08) 0%,
+        rgba(100,180,255,0.03) 100%);
+      border-radius: 8px;
+    }
+    .fridge-products {
+      position: absolute; inset: 0;
+      display: flex; align-items: center;
+      justify-content: space-evenly; padding: 0 10px;
+    }
+    .fridge-glow {
+      position: absolute; bottom: -15px; left: 10%; right: 10%;
+      height: 15px;
+      background: rgba(42,120,200,0.3);
+      filter: blur(8px);
+    }
+
+    /* Decorative elements */
+    .deco-plant {
+      position: absolute;
+      font-size: 42px;
+      z-index: 4;
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
+    }
+    .deco-sign {
+      position: absolute;
+      background: var(--accent);
+      color: #0a0a0a;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 16px;
+      letter-spacing: 0.15em;
+      padding: 8px 18px;
+      border-radius: 6px;
+      z-index: 4;
+      box-shadow: 0 4px 12px rgba(240,224,64,0.3);
+    }
+    .deco-sign.red { background: var(--accent2); box-shadow: 0 4px 12px rgba(255,107,53,0.3); }
+
+    /* Player */
+    #player {
+      position: absolute;
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      background: var(--bg);
+      border: 3px solid var(--accent);
+      z-index: 10;
+      transition: left 0.05s, top 0.05s;
+      box-shadow: 0 0 0 6px rgba(240,224,64,0.15), 0 8px 20px rgba(0,0,0,0.5);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px;
+    }
+    #player-shadow {
+      position: absolute;
+      width: 36px; height: 12px;
+      background: rgba(0,0,0,0.2);
+      border-radius: 50%;
+      z-index: 9;
+      filter: blur(4px);
+    }
+
+    /* Cart follower */
+    #cart-follower {
+      position: absolute;
+      width: 42px; height: 30px;
+      background: rgba(30,30,30,0.85);
+      border: 2px solid rgba(255,255,255,0.2);
+      border-radius: 8px;
+      z-index: 9;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+    }
+    #cart-badge {
+      position: absolute;
+      top: -6px; right: -6px;
+      width: 18px; height: 18px;
+      background: var(--accent);
+      color: #000;
+      border-radius: 50%;
+      font-size: 10px;
+      font-weight: 700;
+      display: none;
+      align-items: center; justify-content: center;
+      z-index: 11;
+    }
+
+    /* ── HUD ── */
+    #hud {
+      position: fixed;
+      top: 16px; left: 16px;
+      width: 270px;
+      background: rgba(10,10,10,0.88);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      z-index: 30;
+      overflow: hidden;
+    }
+    .hud-header {
+      padding: 14px 16px 10px;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .hud-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 18px;
+      letter-spacing: 0.15em;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .hud-total {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--accent);
+    }
+    #cart-list {
+      padding: 10px 16px 14px;
+      max-height: 200px;
+      overflow-y: auto;
+      scrollbar-width: thin;
+    }
+    #cart-list::-webkit-scrollbar { width: 3px; }
+    #cart-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+    .cart-empty {
+      color: var(--text-dim);
+      font-size: 13px;
+      text-align: center;
+      padding: 12px 0;
+    }
+    .cart-item {
+      display: flex; align-items: center; gap: 8px;
+      padding: 6px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+      animation: slideIn 0.2s ease;
+    }
+    @keyframes slideIn { from { opacity:0; transform:translateX(-8px); } to { opacity:1; transform:none; } }
+    .cart-item:last-child { border-bottom: none; }
+    .ci-emoji { font-size: 18px; width: 24px; text-align: center; }
+    .ci-name { flex: 1; font-size: 12px; font-weight: 500; }
+    .ci-qty {
+      font-size: 11px; color: var(--text-dim);
+      background: var(--surface2);
+      padding: 1px 6px; border-radius: 4px;
+    }
+    .ci-price { font-size: 12px; font-weight: 600; color: var(--accent); }
+
+    /* ── MINIMAP ── */
+    #minimap {
+      position: fixed;
+      top: 16px; right: 16px;
+      width: 170px; height: 130px;
+      background: rgba(10,10,10,0.88);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      z-index: 30;
+      overflow: hidden;
+    }
+    #minimap-canvas {
+      width: 100%; height: 100%;
+    }
+
+    /* ── CONTROLS ── */
+    #controls {
+      position: fixed;
+      bottom: 20px; right: 20px;
+      z-index: 30;
+      display: grid;
+      grid-template-columns: repeat(3, 56px);
+      gap: 7px;
+    }
+    .ctrl {
+      width: 56px; height: 56px;
+      border-radius: 13px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(10,10,10,0.85);
+      backdrop-filter: blur(12px);
+      color: white;
+      font-size: 22px;
+      cursor: pointer;
+      transition: background 0.1s, transform 0.1s;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .ctrl:active { background: rgba(240,224,64,0.15); transform: scale(0.93); }
+    .ctrl-center {
+      background: rgba(240,224,64,0.12);
+      border-color: rgba(240,224,64,0.25);
+    }
+
+    /* ── MESSAGE ── */
     #message {
       position: fixed;
-      bottom: 28px;
-      left: 50%;
+      bottom: 100px; left: 50%;
       transform: translateX(-50%);
-      background: black;
-      padding: 14px 25px;
-      border-radius: 25px;
-      z-index: 30;
-      display: none;
-      max-width: 90%;
-      text-align: center;
-    }
-
-    #modal {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,.85);
-      z-index: 60;
-      justify-content: center;
-      align-items: center;
-    }
-
-    #productModal,
-    #receipt {
-      background: white;
-      color: black;
-      width: 90%;
-      max-width: 430px;
-      padding: 25px;
-      border-radius: 22px;
-      text-align: center;
-    }
-
-    #productModal h2,
-    #receipt h2 {
-      margin-bottom: 15px;
-    }
-
-    .modal-btn {
-      margin-top: 15px;
+      background: rgba(10,10,10,0.9);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border);
       padding: 12px 24px;
-      border: none;
+      border-radius: 50px;
+      z-index: 35;
+      display: none;
+      font-size: 14px;
+      font-weight: 500;
+      white-space: nowrap;
+      max-width: 90vw;
+      text-align: center;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    }
+    #message.success { border-color: rgba(80,200,120,0.3); color: #7effa4; }
+    #message.warning { border-color: rgba(240,224,64,0.3); color: var(--accent); }
+    #message.info    { border-color: rgba(100,160,255,0.3); color: #aaccff; }
+
+    /* ── MODAL ── */
+    #modal-backdrop {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(6px);
+      z-index: 60;
+      align-items: center; justify-content: center;
+    }
+    .modal-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      width: 90%; max-width: 400px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      animation: popIn 0.2s cubic-bezier(.34,1.56,.64,1);
+    }
+    @keyframes popIn { from { opacity:0; transform:scale(0.9); } to { opacity:1; transform:scale(1); } }
+    .modal-header {
+      padding: 28px 28px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex; flex-direction: column; align-items: center; gap: 12px;
+    }
+    .modal-emoji {
+      width: 80px; height: 80px;
+      background: var(--surface2);
       border-radius: 20px;
-      background: black;
-      color: white;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 44px;
+      border: 1px solid var(--border);
+    }
+    .modal-name {
+      font-size: 22px; font-weight: 600;
+      text-align: center;
+    }
+    .modal-price {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 32px;
+      letter-spacing: 0.1em;
+      color: var(--accent);
+    }
+    .modal-body { padding: 20px 28px; }
+    .qty-row {
+      display: flex; align-items: center; justify-content: center; gap: 16px;
+      margin-bottom: 20px;
+    }
+    .qty-btn {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      color: white; font-size: 22px;
       cursor: pointer;
-      font-weight: bold;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.1s;
+    }
+    .qty-btn:hover { background: var(--surface); }
+    #qty-display {
+      font-size: 26px; font-weight: 600;
+      min-width: 40px; text-align: center;
+    }
+    .modal-btns {
+      display: flex; gap: 10px;
+    }
+    .btn-add {
+      flex: 1; padding: 14px;
+      background: var(--accent);
+      color: #0a0a0a;
+      border: none; border-radius: 12px;
+      font-size: 14px; font-weight: 700;
+      letter-spacing: 0.08em;
+      cursor: pointer;
+      transition: transform 0.1s;
+    }
+    .btn-add:hover { transform: scale(1.02); }
+    .btn-close {
+      padding: 14px 20px;
+      background: var(--surface2);
+      color: var(--text-dim);
+      border: none; border-radius: 12px;
+      font-size: 14px; font-weight: 600;
+      cursor: pointer;
     }
 
-    .close-btn {
-      background: #444;
+    /* Receipt modal */
+    #receipt-modal { display: none; }
+    .receipt-card {
+      background: white; color: #111;
+      width: 90%; max-width: 400px;
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      animation: popIn 0.2s cubic-bezier(.34,1.56,.64,1);
+    }
+    .receipt-header {
+      background: #0a0a0a;
+      color: white;
+      padding: 24px;
+      text-align: center;
+    }
+    .receipt-store {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 28px; letter-spacing: 0.2em;
+    }
+    .receipt-store span { color: var(--accent); }
+    .receipt-date {
+      font-size: 11px; letter-spacing: 0.15em;
+      color: rgba(255,255,255,0.4);
+      margin-top: 4px;
+    }
+    .receipt-body { padding: 20px 24px; }
+    .receipt-line {
+      display: flex; justify-content: space-between;
+      padding: 7px 0;
+      font-size: 14px;
+      border-bottom: 1px dashed rgba(0,0,0,0.08);
+    }
+    .receipt-line:last-child { border-bottom: none; }
+    .receipt-total-row {
+      display: flex; justify-content: space-between;
+      padding: 14px 24px;
+      background: #f5f5f0;
+      font-weight: 700;
+      font-size: 18px;
+      border-top: 2px solid #0a0a0a;
+    }
+    .receipt-footer {
+      padding: 16px 24px 24px;
+      text-align: center;
+    }
+    .receipt-thanks {
+      font-size: 12px; color: #888;
+      margin-bottom: 16px; line-height: 1.5;
+    }
+    .btn-confirm {
+      width: 100%; padding: 15px;
+      background: #0a0a0a;
+      color: white;
+      border: none; border-radius: 12px;
+      font-size: 15px; font-weight: 700;
+      cursor: pointer;
+      letter-spacing: 0.08em;
     }
 
-    @media (max-width: 700px) {
-      #intro h1 {
-        font-size: 34px;
-      }
+    /* ── KEYBOARD HINT ── */
+    #key-hint {
+      position: fixed;
+      bottom: 20px; left: 16px;
+      background: rgba(10,10,10,0.7);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 8px 14px;
+      font-size: 11px;
+      color: var(--text-dim);
+      z-index: 25;
+      letter-spacing: 0.05em;
+    }
 
-      #hud {
-        width: 200px;
-        font-size: 12px;
-      }
-
-      #minimap {
-        display: none;
-      }
-
-      #controls {
-        right: 12px;
-        bottom: 12px;
-        grid-template-columns: repeat(3, 50px);
-      }
-
-      .ctrl {
-        width: 50px;
-        height: 50px;
-      }
+    /* Responsive */
+    @media (max-width: 640px) {
+      #hud { width: 190px; }
+      #minimap { display: none; }
+      #key-hint { display: none; }
+      .ctrl { width: 50px; height: 50px; font-size: 20px; }
+      #controls { grid-template-columns: repeat(3, 50px); gap: 6px; }
     }
   </style>
 </head>
-
 <body>
 
-  <div id="loading">
-    <h1>DIGITALISING...</h1>
-    <div class="bar"><div class="fill"></div></div>
+<!-- LOADING -->
+<div id="loading">
+  <div class="load-logo">THE <span>SUPER</span>MARKET</div>
+  <div class="load-sub">Digital Interactive Branch</div>
+  <div class="load-bar-wrap"><div class="load-bar-fill"></div></div>
+  <div class="load-pct" id="load-pct">0%</div>
+</div>
+
+<!-- INTRO -->
+<div id="intro">
+  <div class="intro-grid"></div>
+  <div class="intro-content">
+    <div class="intro-eyebrow">Bienvenido a la sucursal digital</div>
+    <div class="intro-title">THE<br><span class="highlight">SUPER</span>MARKET</div>
+    <div class="intro-desc">Recorre virtualmente nuestras estanterías, selecciona tus productos y completa tu compra de forma natural.</div>
+    <button class="intro-enter" onclick="startGame()">ENTRAR AL MERCADO</button>
   </div>
+</div>
 
-  <div id="intro">
-    <h1>THE SUPERMARKET</h1>
-    <p>Compra dentro de una sucursal digital interactiva</p>
-    <button onclick="startGame()">ENTRAR</button>
-  </div>
+<!-- GAME -->
+<div id="game">
+  <div id="store">
+    <!-- Floor -->
+    <div class="floor-base"></div>
+    <div class="floor-tiles"></div>
+    <div class="floor-accent"></div>
 
-  <div id="game">
-    <div id="store">
+    <!-- Walls -->
+    <div class="wall wall-top"></div>
+    <div class="wall wall-bottom"></div>
+    <div class="wall wall-left"></div>
+    <div class="wall wall-right"></div>
+    <div class="wall-stripe ws-top"></div>
+    <div class="wall-stripe ws-bottom"></div>
+    <div class="wall-stripe ws-left"></div>
+    <div class="wall-stripe ws-right"></div>
 
-      <div class="wall top-wall"></div>
-      <div class="wall bottom-wall"></div>
-      <div class="wall left-wall"></div>
-      <div class="wall right-wall"></div>
+    <!-- Entrance -->
+    <div id="entrance">🚪 &nbsp;ENTRADA PRINCIPAL</div>
+    <div class="entrance-arrow">▲ ENTRAR</div>
 
-      <div id="entrance">🚪 ENTRADA PRINCIPAL</div>
+    <!-- Aisle labels -->
+    <div class="aisle-line" style="left:70px;top:60px;width:2px;height:1590px;opacity:0;"></div>
 
-      <div class="aisle" style="left:260px; top:100px;">PASILLO 1</div>
-      <div class="aisle" style="left:720px; top:100px;">PASILLO 2</div>
-      <div class="aisle" style="left:1180px; top:100px;">PASILLO 3</div>
-      <div class="aisle" style="left:1640px; top:100px;">PASILLO 4</div>
+    <!-- Section signs -->
+    <div class="deco-sign" style="left:110px;top:65px;">PRODUCTOS FRESCOS</div>
+    <div class="deco-sign red" style="left:1860px;top:65px;">OFERTAS</div>
+    <div class="deco-sign" style="left:1000px;top:65px;">ABARROTES</div>
 
-      <div class="shelf" data-name="🍎 Frutas" style="left:180px; top:190px;">
-        <div class="product" onclick="openProduct('Manzana', 35, '🍎')">🍎</div>
-        <div class="product" onclick="openProduct('Banana', 25, '🍌')">🍌</div>
-        <div class="product" onclick="openProduct('Uvas', 120, '🍇')">🍇</div>
-        <div class="product" onclick="openProduct('Naranja', 40, '🍊')">🍊</div>
+    <!-- Decorative plants -->
+    <div class="deco-plant" style="left:80px;top:80px;">🌿</div>
+    <div class="deco-plant" style="left:2450px;top:80px;">🌿</div>
+    <div class="deco-plant" style="left:80px;top:1550px;">🌿</div>
+    <div class="deco-plant" style="left:2450px;top:1550px;">🌿</div>
+    <div class="deco-plant" style="left:800px;top:1200px;">🪴</div>
+    <div class="deco-plant" style="left:1400px;top:1200px;">🪴</div>
+
+    <!-- ═══════════════════ ROW 1 SHELVES (top) ═══════════════════ -->
+
+    <!-- 🍎 FRUTAS -->
+    <div class="shelf-unit" style="left:120px;top:130px;">
+      <div class="shelf-label">🍎 Frutas Frescas</div>
+      <div class="shelf-body" style="width:360px;height:90px;">
+        <div class="product-slot" onclick="openProduct('Manzana','🍎',38)">
+          <div class="product-icon">🍎</div>
+          <div class="product-price-tag">RD$38</div>
+        </div>
+        <div class="product-slot" onclick="openProduct('Banana','🍌',25)">
+          <div class="product-icon">🍌</div>
+          <div class="product-price-tag">RD$25</div>
+        </div>
+        <div class="product-slot" onclick="openProduct('Uvas','🍇',140)">
+          <div class="product-icon">🍇</div>
+          <div class="product-price-tag">RD$140</div>
+        </div>
+        <div class="product-slot" onclick="openProduct('Naranja','🍊',45)">
+          <div class="product-icon">🍊</div>
+          <div class="product-price-tag">RD$45</div>
+        </div>
+        <div class="product-slot" onclick="openProduct('Fresa','🍓',95)">
+          <div class="product-icon">🍓</div>
+          <div class="product-price-tag">RD$95</div>
+        </div>
       </div>
-
-      <div class="shelf" data-name="🧃 Bebidas" style="left:640px; top:190px;">
-        <div class="product" onclick="openProduct('Agua', 30, '💧')">💧</div>
-        <div class="product" onclick="openProduct('Jugo', 75, '🧃')">🧃</div>
-        <div class="product" onclick="openProduct('Café', 180, '☕')">☕</div>
-        <div class="product" onclick="openProduct('Refresco', 95, '🥤')">🥤</div>
-      </div>
-
-      <div class="shelf" data-name="🍞 Panadería" style="left:1100px; top:190px;">
-        <div class="product" onclick="openProduct('Pan', 60, '🍞')">🍞</div>
-        <div class="product" onclick="openProduct('Bizcocho', 250, '🍰')">🍰</div>
-        <div class="product" onclick="openProduct('Dona', 80, '🍩')">🍩</div>
-        <div class="product" onclick="openProduct('Croissant', 95, '🥐')">🥐</div>
-      </div>
-
-      <div class="shelf" data-name="🥩 Carnes" style="left:1560px; top:190px;">
-        <div class="product" onclick="openProduct('Pollo', 280, '🍗')">🍗</div>
-        <div class="product" onclick="openProduct('Carne', 350, '🥩')">🥩</div>
-        <div class="product" onclick="openProduct('Pescado', 300, '🐟')">🐟</div>
-        <div class="product" onclick="openProduct('Hamburguesa', 190, '🍔')">🍔</div>
-      </div>
-
-      <div class="shelf" data-name="🥛 Lácteos" style="left:180px; top:530px;">
-        <div class="product" onclick="openProduct('Leche', 95, '🥛')">🥛</div>
-        <div class="product" onclick="openProduct('Queso', 160, '🧀')">🧀</div>
-        <div class="product" onclick="openProduct('Huevos', 220, '🥚')">🥚</div>
-        <div class="product" onclick="openProduct('Yogurt', 70, '🍶')">🍶</div>
-      </div>
-
-      <div class="shelf" data-name="🧼 Limpieza" style="left:640px; top:530px;">
-        <div class="product" onclick="openProduct('Jabón', 75, '🧼')">🧼</div>
-        <div class="product" onclick="openProduct('Papel', 140, '🧻')">🧻</div>
-        <div class="product" onclick="openProduct('Detergente', 230, '🧴')">🧴</div>
-        <div class="product" onclick="openProduct('Escoba', 180, '🧹')">🧹</div>
-      </div>
-
-      <div class="shelf" data-name="🍚 Básicos" style="left:1100px; top:530px;">
-        <div class="product" onclick="openProduct('Arroz', 180, '🍚')">🍚</div>
-        <div class="product" onclick="openProduct('Aceite', 240, '🛢️')">🛢️</div>
-        <div class="product" onclick="openProduct('Sal', 45, '🧂')">🧂</div>
-        <div class="product" onclick="openProduct('Habichuelas', 120, '🫘')">🫘</div>
-      </div>
-
-      <div class="shelf" data-name="🍫 Snacks" style="left:1560px; top:530px;">
-        <div class="product" onclick="openProduct('Chocolate', 90, '🍫')">🍫</div>
-        <div class="product" onclick="openProduct('Galletas', 85, '🍪')">🍪</div>
-        <div class="product" onclick="openProduct('Helado', 210, '🍦')">🍦</div>
-        <div class="product" onclick="openProduct('Popcorn', 75, '🍿')">🍿</div>
-      </div>
-
-      <div class="shelf" data-name="🥫 Enlatados" style="left:420px; top:870px;">
-        <div class="product" onclick="openProduct('Atún', 95, '🥫')">🥫</div>
-        <div class="product" onclick="openProduct('Salsa', 70, '🍅')">🍅</div>
-        <div class="product" onclick="openProduct('Maíz', 85, '🌽')">🌽</div>
-        <div class="product" onclick="openProduct('Sopa', 110, '🍲')">🍲</div>
-      </div>
-
-      <div class="shelf" data-name="🧴 Cuidado Personal" style="left:980px; top:870px;">
-        <div class="product" onclick="openProduct('Shampoo', 260, '🧴')">🧴</div>
-        <div class="product" onclick="openProduct('Pasta Dental', 130, '🪥')">🪥</div>
-        <div class="product" onclick="openProduct('Perfume', 450, '🧴')">🧴</div>
-        <div class="product" onclick="openProduct('Crema', 220, '🧼')">🧼</div>
-      </div>
-
-      <div id="checkout" onclick="checkout()">CAJA 🧾</div>
-
-      <div id="player"></div>
-      <div id="cartIcon">🛒</div>
-
     </div>
-  </div>
 
+    <!-- 🥦 VEGETALES -->
+    <div class="shelf-unit" style="left:120px;top:310px;">
+      <div class="shelf-label">🥦 Vegetales</div>
+      <div class="shelf-body" style="width:360px;height:90px;">
+        <div class="product-slot" onclick="openProduct('Lechuga','🥬',55)">
+          <div class="product-icon">🥬</div>
+          <div class="product-price-tag">RD$55</div>
+        </div>
+        <div class="product-slot" onclick="openProduct('Tomate','🍅',40)">
+          <div class="product-icon">🍅</div>
+          <div class="product-price-tag">RD$40</div>
+        </div>
+        <div class="product-slot" onclick="openProduct('Brócoli','🥦',85)">
+          <div class="product-icon">🥦</div>
+          <div class="product-price-tag">RD$85</div>
+        </div>
+        <div class="product-slot" onclick="openProduct('Cebolla','🧅',30)">
+          <div class="product-icon">🧅</div>
+          <div class="product-price-tag">RD$30</div>
+        </div>
+        <div class="product-slot" onclick="openProduct('Zanahoria','🥕',35)">
+          <div class="product-icon">🥕</div>
+          <div class="product-price-tag">RD$35</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 🥩 CARNES -->
+    <div class="shelf-unit" style="left:560px;top:130px;">
+      <div class="shelf-label">🥩 Carnes & Aves</div>
+      <div class="shelf-body" style="width:360px;height:90px;">
+        <div class="product-slot" onclick="openProduct('Pollo','🍗',280)">
+          <div class="product-icon">🍗</div>
+          <div class="product-price-tag">RD$280</div>
+        </div>
+        <div class="product-slot" onclick="openProduct('Res','🥩',380)">
+          <div class="product-icon">🥩</div>
+          <div class="product-price-tag">RD$380</div>
+        </div>
+        <div class="product-slot" onclick="openProduct('Cerdo','🐷',320)">
+          <div class="product-icon">🐷</div>
+          <div class="product-price-tag">RD$320</div>
+        </div>
+        <div class="product-slot" onclick="openProduct('Chorizo','🌭',190)">
+          <div class="product-icon">🌭</div>
+          <div class="product-price-tag">RD$190</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 🐟 MARISCOS -->
+    <div class="shelf-unit" style="left:560px;top:310px;">
+      <div class="shelf-label">🐟 Mariscos</div>
+      <div class="shelf-body" style="width:360px;height:90px;">
+        <div class="product-slot" onclick="openProduct('Salmón','🐟',450)">
+          <div class="product-icon">🐟</div>
+          <div class="product-price-tag">RD$450</div>
+        </div>
+        <div class="product-slot" onclick="openProduct('Camarón','🦐',380)">
+          <div class="product-icon">🦐</div>
+          <div class="product-price-tag">RD$380</div>
+        </div>
+        <div class="product-slot" onclick="openProduct('Cangrejo','🦀',520)">
+          <div class="product-icon">🦀</div>
+          <div class="product-price-tag">RD$520</div>
+        </div>
+        <div class="product-slot" onclick="openProduct('Atún fresco','🐠',290)">
+          <div class="product-icon">🐠</div>
+          <div class="product-price-tag">RD$290</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════ REFRIGERADOS ═══════ -->
+    <!-- Lácteos fridge -->
+    <div class="fridge-unit" style="left:1000px;top:90px;width:400px;height:110px;">
+      <div class="fridge-products">
+        <div class="product-slot" onclick="openProduct('Leche','🥛',95)">
+          <div class="product-icon" style="background:#e8f4ff;border-color:#b3d9ff;">🥛</div>
+          <div class="product-price-tag" style="background:rgba(42,120,200,0.7);">RD$95</div>
+        </div>
+        <div class="product-slot" onclick="openProduct('Queso','🧀',175)">
+          <div class="product-icon" style="background:#e8f4ff;border-color:#b3d9ff;">🧀</div>
+          <div class="product-price-tag" style="background:rgba(42,120,200,0.7);">RD$175</div>
+        </div>
+        <div class="product-slot" onclick="openProduct('Yogurt','🍶',80)">
+          <div class="product-icon" style="background:#e8f4ff;border-color:#b3d9ff;">🍶</div>
+          <div class="product-price-tag" style="background:rgba(42,120,200,0.7);">RD$80</div>
+        </div>
+        <div class="product-slot" onclick="openProduct('Mantequilla','🧈',145)">
+          <div class="product-icon" style="background:#e8f4ff;border-color:#b3d9ff;">🧈</div>
+          <div class="product-price-tag" style="background:rgba(42,120,200,0.7);">RD$145</div>
+        </div>
+        <div class="product-slot" onclick="openProduct('Huevos','🥚',220)">
+          <div class="product-icon" style="background:#e8f4ff;border-color:#b3d9ff;">🥚</div>
+          <div class="product-price-tag" style="background:rgba(42,120,200,0.7);">RD$220</div>
+        </div>
+      </div>
+      <div class="fridge-glow"></div>
+      <div style="position:absolute;top:-28px;left:0;right:0;text-align:center;font-size:11px;font-weight:700;letter-spacing:0.25em;color:#5ab4ff;text-transform:uppercase;">❄️ Lácteos Refrigerados</div>
+    </div>
+
+    <!-- Bebidas fridge -->
+    <div class="fridge-unit" style="left:1000px;top:270px;width:400px;height:110px;">
+      <div class="fridge-products">
+        <div class="product-slot" onclick="openProduct('Agua','💧',35)">
+          <div class="product-icon" style="background:#e8f4ff;border-color:#b3d9ff;">💧</div>
+          <div class="product-price-tag" style="background:rgba(42,120,200,0.7);">RD$35</div>
+        </div>
+        <div class="product-slot" onclick="openProduct('Jugo Natural','🧃',85)">
+          <div class="product-icon" style="background:#e8f4ff;border-color:#b3d9ff;">🧃</div>
+          <div class="product-price-tag" style="background:rgba(42,120,200,0.7);">RD$85</div>
+        </div>
+        <div class="product-slot" onclick="openProduct('Refresco','🥤',95)">
+          <div class="product-icon" style="background:#e8f4ff;border-color:#b3d9ff;">🥤</div>
+          <div class="product-price-tag" style="background:rgba(42,120,200,0.7);">RD$95</div>
+        </div>
+        <div class="product-slot" onclick="openProduct('Cerveza','🍺',130)">
+          <div class="product-icon" style="background:#e8f4ff;border-color:#b3d9ff;">🍺</div>
+          <div class="product-price-tag" style="background:rgba(42,120,200,0.7);">RD$130</div>
+        </div>
+        <div class="product-slot" onclick="openProduct('Vino','🍷',650)">
+          <div class="product-icon" style="background:#e8f4ff;border-color:#b3d9ff;">🍷</div>
+          <div class="product-price-tag" style="background:rgba(42,120,200,0.7);">RD$650</div>
+        </div>
+      </div>
+      <div class="fridge-glow"></div>
+      <div style="position:absolute;top:-28px;left:0;right:0;text-align:center;font-size:11px;font-weight:700;letter-spacing:0.25em;color:#5ab4ff;text-transform:uppercase;">❄️ Bebidas Frías</div>
+    </div>
+
+    <!-- ═══════ ABARROTES CENTER ═══════ -->
+    <!-- Row 2 center -->
+    <div class="shelf-unit" style="left:1480px;top:130px;">
+      <div class="shelf-label">🍞 Panadería</div>
+      <div class="shelf-body" style="width:340px;height:90px;">
+        <div class="product-slot" onclick="openProduct('Pan','🍞',65)">
+          <div class="product-icon">🍞</div>
+          <div class="product-price-tag">RD$65</div>
+        </div>
+        <div class="product-slot" onclick="openProduct('Croissant','🥐',95)">
+          <div class="product-icon">🥐</div>
+          <div class="product-price-tag">RD$95</div>
+        </div>
+        <div class="product-slot" onclick="openProduct('Dona','🍩',80)">
+          <div class="product-icon">🍩</div>
+          <div class="product-price-tag">RD$80</div>
+        </div>
+        <div class="product-slot" onclick="openProduct('Torta','🎂',350)">
+          <div class="product-icon">🎂</div>
+          <div class="product-price-tag">RD$350</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="shelf-unit" style="left:1480px;top:310px;">
+      <div class="shelf-label">☕ Bebidas Calientes</div>
+      <div class="shelf-body" style="width:340px;height:90px;">
+        <div class="product-slot" onclick="openProduct('Café','☕',185)">
+          <div class="product-icon">☕</div>
+          <div class="product-price-tag">RD$185</div>
+        </div>
+        <div class="product-slot" onclick="openProduct('Té','🍵',120)">
+          <div class="product-icon">🍵</div>
+          <div class="product-price-tag">RD$120</div>
+        </div>
+        <div class="product-slot" onclick="openProduct('Cacao','🍫',165)">
+          <div class="product-icon">🍫</div>
+          <div class="product-price-tag">RD$165</div>
+        </div>
+        <div class="product-slot" onclick="openProduct('Miel','🍯',280)">
+          <div class="product-icon">🍯</div>
+          <div class="product-price-tag">RD$280</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Far right shelves -->
+    <div class="shelf-unit" style="left:1920px;top:130px;">
+      <div class="shelf-label">🍫 Dulces & Snacks</div>
+      <div class="shelf-body" style="width:340px;height:90px;">
+        <div class="product-slot" onclick="openProduct('Chocolate','🍫',90)">
+          <div class="product-icon">🍫</div>
+          <div class="product-price-tag">RD$90</div>
+        </div>
+        <div class="product-slot" onclick="openProduct('Galletas','🍪',85)">
+          <div class="product-icon">🍪</div>
+          <div class="product-price-tag">RD$85</div>
+        </div>
+        <div class="product-slot" onclick="openProduct('Popcorn','🍿',75)">
+          <div class="product-icon">🍿</div>
+          <div class="product-price-tag">RD$75</div>
+        </div>
+        <div class="product-slot" onclick="openProduct('Caramelos','🍬',45)">
+          <div class="product-icon">🍬</div>
+          <div class="product-price-tag">RD$45</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="shelf-unit" style="left:1920px;top:310px;">
+      <div class="shelf-label">🍦 Helados & Postres</div>
+      <div class="shelf-body" style="width:340px;height:90px;">
+        <div class="product-slot" onclick="openProduct('Helado','🍦',220)">
+          <div class="product-icon">🍦</div>
+          <div class="product-price-tag">RD$220</div>
+        </div>
+        <div class="product-slot" onclick="openProduct('Flan','🍮',150)">
+          <div class="product-icon">🍮</div>
+          <div class="product-price-tag">RD$150</div>
+        </div>
+        <div class="product-slot" onclick="openProduct('Pudín','🧁',95)">
+          <div class="product-icon">🧁</div>
+          <div class="product-price-tag">RD$95</div>
+        </div>
+        <div class="product-slot" onclick="openProduct('Brownie','🍫',110)">
+          <div class="product-icon">🍫</div>
+          <div class="product-price-tag">RD$110</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════ ROW 3: ABARROTES CENTRAL ═══════ -->
+    <div class="shelf-unit" style="left:120px;top:560px;">
+      <div class="shelf-label">🍚 Básicos del Hogar</div>
+      <div class="shelf-body" style="width:360px;height:90px;">
+        <div class="product-slot" onclick="openProduct('Arroz','🍚',185)">
+          <div class="product-icon">🍚</div>
+          <div class="product-price-tag">RD$185</div>
+        </div>
+        <div class="product-slot" onclick="openProduct('Habichuelas','🫘',120)">
+          <div class="product-icon">🫘</div>
+          <div class="product-price-tag">RD$120</div>
+        </div>
+        <div class="product-slot" onclick="openProduct('Aceite','🛢️',260)">
+          <div class="product-icon">🛢️</div>
+          <div class="product-price-tag">RD$260</div>
+        </div>
+        <div class="product-slot" onclick="openProduct('Sal','🧂',48)">
+          <div class="product-icon">🧂</div>
+          <div class="product-price-tag">RD$48</div>
+        </div>
+        <div class="product-slot" onclick="openProduct('Azúcar','🍬',75)">
+          <div class="product-icon">🍬</div>
+          <div class="product-price-tag">RD$75</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="shelf-unit" style="left:560px;top:560px;">
+      <div class="shelf-label">🥫 Enlatados</div>
+      <div class="shelf-body" style="width:360px;height:90px;">
+        <div class="product-slot" onclick="openProduct('Atún','🥫',98)">
+          <div class="product-icon">🥫</div>
+          <div class="product-price-tag">RD$98</div>
+        </div>
+        <div class="product-slot" onclick="openProduct('Maíz','🌽',88)">
+          <div class="product-icon">🌽</div>
+          <div class="product-price-tag">RD$88</div>
+        </div>
+        <div class="product-slot" onclick="openProduct('Pasta','🍝',75)">
+          <div class="product-icon">🍝</div>
+          <div class="product-price-tag">RD$75</div>
+        </div>
+        <div class="product-slot" onclick="openProduct('Sopa','🍲',115)">
+          <div class="product-icon">🍲</div>
+          <div class="product-price-tag">RD$115</div>
+        </div>
+        <div class="product-slot" onclick="openProduct('Salsa','🍅',72)">
+          <div class="product-icon">🍅</div>
+          <div class="product-price-tag">RD$72</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="shelf-unit" style="left:1000px;top:560px;">
+      <div class="shelf-label">🧼 Limpieza del Hogar</div>
+      <div class="shelf-body" style="width:380px;height:90px;">
+        <div class="product-slot" onclick="openProduct('Detergente','🧴',235)">
+          <div class="product-icon">🧴</div>
+          <div class="product-price-tag">RD$235</div>
+        </div>
+        <div class="product-slot" onclick="openProduct('Jabón','🧼',78)">
+          <div class="product-icon">🧼</div>
+          <div class="product-price-tag">RD$78</div>
+        </div>
+        <div class="product-slot" onclick="openProduct('Papel','🧻',145)">
+          <div class="product-icon">🧻</div>
+          <div class="product-price-tag">RD$145</div>
+        </div>
+        <div class="product-slot" onclick="openProduct('Escoba','🧹',185)">
+          <div class="product-icon">🧹</div>
+          <div class="product-price-tag">RD$185</div>
+        </div>
+        <div class="product-slot" onclick="openProduct('Cloro','🪣',120)">
+          <div class="product-icon">🪣</div>
+          <div class="product-price-tag">RD$120</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="shelf-unit" style="left:1480px;top:560px;">
+      <div class="shelf-label">🧴 Cuidado Personal</div>
+      <div class="shelf-body" style="width:360px;height:90px;">
+        <div class="product-slot" onclick="openProduct('Shampoo','🧴',265)">
+          <div class="product-icon">🧴</div>
+          <div class="product-price-tag">RD$265</div>
+        </div>
+        <div class="product-slot" onclick="openProduct('Pasta Dental','🪥',135)">
+          <div class="product-icon">🪥</div>
+          <div class="product-price-tag">RD$135</div>
+        </div>
+        <div class="product-slot" onclick="openProduct('Desodorante','🧴',195)">
+          <div class="product-icon">🧴</div>
+          <div class="product-price-tag">RD$195</div>
+        </div>
+        <div class="product-slot" onclick="openProduct('Crema','🧼',225)">
+          <div class="product-icon">🧼</div>
+          <div class="product-price-tag">RD$225</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="shelf-unit" style="left:1920px;top:560px;">
+      <div class="shelf-label">💊 Farmacia Básica</div>
+      <div class="shelf-body" style="width:340px;height:90px;">
+        <div class="product-slot" onclick="openProduct('Aspirina','💊',85)">
+          <div class="product-icon">💊</div>
+          <div class="product-price-tag">RD$85</div>
+        </div>
+        <div class="product-slot" onclick="openProduct('Vitaminas','💊',350)">
+          <div class="product-icon">💊</div>
+          <div class="product-price-tag">RD$350</div>
+        </div>
+        <div class="product-slot" onclick="openProduct('Banditas','🩹',65)">
+          <div class="product-icon">🩹</div>
+          <div class="product-price-tag">RD$65</div>
+        </div>
+        <div class="product-slot" onclick="openProduct('Alcohol','🧪',95)">
+          <div class="product-icon">🧪</div>
+          <div class="product-price-tag">RD$95</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════ BOTTOM ROWS ═══════ -->
+    <div class="shelf-unit" style="left:120px;top:820px;">
+      <div class="shelf-label">🌾 Cereales & Granos</div>
+      <div class="shelf-body" style="width:360px;height:90px;">
+        <div class="product-slot" onclick="openProduct('Avena','🌾',145)">
+          <div class="product-icon">🌾</div>
+          <div class="product-price-tag">RD$145</div>
+        </div>
+        <div class="product-slot" onclick="openProduct('Cereal','🥣',225)">
+          <div class="product-icon">🥣</div>
+          <div class="product-price-tag">RD$225</div>
+        </div>
+        <div class="product-slot" onclick="openProduct('Granola','🥜',295)">
+          <div class="product-icon">🥜</div>
+          <div class="product-price-tag">RD$295</div>
+        </div>
+        <div class="product-slot" onclick="openProduct('Maíz Harina','🌽',95)">
+          <div class="product-icon">🌽</div>
+          <div class="product-price-tag">RD$95</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="shelf-unit" style="left:560px;top:820px;">
+      <div class="shelf-label">🧑‍🍳 Condimentos</div>
+      <div class="shelf-body" style="width:360px;height:90px;">
+        <div class="product-slot" onclick="openProduct('Ketchup','🍅',120)">
+          <div class="product-icon">🍅</div>
+          <div class="product-price-tag">RD$120</div>
+        </div>
+        <div class="product-slot" onclick="openProduct('Mayonesa','🥚',145)">
+          <div class="product-icon">🥚</div>
+          <div class="product-price-tag">RD$145</div>
+        </div>
+        <div class="product-slot" onclick="openProduct('Mostaza','🌭',95)">
+          <div class="product-icon">🌭</div>
+          <div class="product-price-tag">RD$95</div>
+        </div>
+        <div class="product-slot" onclick="openProduct('Sazón','🌶️',65)">
+          <div class="product-icon">🌶️</div>
+          <div class="product-price-tag">RD$65</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="shelf-unit" style="left:1000px;top:820px;">
+      <div class="shelf-label">🎒 Bolsas & Varios</div>
+      <div class="shelf-body" style="width:380px;height:90px;">
+        <div class="product-slot" onclick="openProduct('Bolsas','🛍️',45)">
+          <div class="product-icon">🛍️</div>
+          <div class="product-price-tag">RD$45</div>
+        </div>
+        <div class="product-slot" onclick="openProduct('Papel Alum','🪙',85)">
+          <div class="product-icon">🪙</div>
+          <div class="product-price-tag">RD$85</div>
+        </div>
+        <div class="product-slot" onclick="openProduct('Pilas','🔋',175)">
+          <div class="product-icon">🔋</div>
+          <div class="product-price-tag">RD$175</div>
+        </div>
+        <div class="product-slot" onclick="openProduct('Velas','🕯️',130)">
+          <div class="product-icon">🕯️</div>
+          <div class="product-price-tag">RD$130</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="shelf-unit" style="left:1480px;top:820px;">
+      <div class="shelf-label">🐾 Mascotas</div>
+      <div class="shelf-body" style="width:360px;height:90px;">
+        <div class="product-slot" onclick="openProduct('Comida Perro','🐕',380)">
+          <div class="product-icon">🐕</div>
+          <div class="product-price-tag">RD$380</div>
+        </div>
+        <div class="product-slot" onclick="openProduct('Comida Gato','🐈',350)">
+          <div class="product-icon">🐈</div>
+          <div class="product-price-tag">RD$350</div>
+        </div>
+        <div class="product-slot" onclick="openProduct('Juguete','🦴',145)">
+          <div class="product-icon">🦴</div>
+          <div class="product-price-tag">RD$145</div>
+        </div>
+        <div class="product-slot" onclick="openProduct('Arena Gato','🪣',225)">
+          <div class="product-icon">🪣</div>
+          <div class="product-price-tag">RD$225</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════ CHECKOUT ═══════ -->
+    <div id="checkout-area" onclick="checkout()">
+      <div class="checkout-stripe"></div>
+      <div class="checkout-inner">
+        <div class="checkout-icon">🧾</div>
+        <div class="checkout-label">CAJA</div>
+        <div class="checkout-sub">ACÉRCATE PARA PAGAR</div>
+      </div>
+    </div>
+
+    <!-- Player & Cart -->
+    <div id="player-shadow"></div>
+    <div id="player">👤</div>
+    <div id="cart-follower">🛒<div id="cart-badge"></div></div>
+
+  </div><!-- /store -->
+
+  <!-- HUD -->
   <div id="hud">
-    <h2>🛒 Carrito</h2>
-    <p>Total: RD$<span id="total">0</span></p>
-    <div id="cartList">Vacío</div>
+    <div class="hud-header">
+      <div class="hud-title">🛒 Carrito</div>
+      <div class="hud-total">RD$<span id="total">0</span></div>
+    </div>
+    <div id="cart-list"><div class="cart-empty">Vacío</div></div>
   </div>
 
+  <!-- Minimap -->
   <div id="minimap">
-    <h3>🗺️ Mapa</h3>
-    <p>🍎 Frutas</p>
-    <p>🧃 Bebidas</p>
-    <p>🥩 Carnes</p>
-    <p>🧾 Caja</p>
+    <canvas id="minimap-canvas" width="170" height="130"></canvas>
   </div>
 
+  <!-- Controls -->
   <div id="controls">
-    <div></div><button class="ctrl" onclick="move('up')">▲</button><div></div>
-    <button class="ctrl" onclick="move('left')">◀</button>
-    <button class="ctrl" onclick="checkout()">🧾</button>
-    <button class="ctrl" onclick="move('right')">▶</button>
-    <div></div><button class="ctrl" onclick="move('down')">▼</button><div></div>
+    <div></div>
+    <button class="ctrl" ontouchstart="startMove('up')" ontouchend="stopMove()" onclick="move('up')">▲</button>
+    <div></div>
+    <button class="ctrl" ontouchstart="startMove('left')" ontouchend="stopMove()" onclick="move('left')">◀</button>
+    <button class="ctrl ctrl-center" onclick="checkout()">🧾</button>
+    <button class="ctrl" ontouchstart="startMove('right')" ontouchend="stopMove()" onclick="move('right')">▶</button>
+    <div></div>
+    <button class="ctrl" ontouchstart="startMove('down')" ontouchend="stopMove()" onclick="move('down')">▼</button>
+    <div></div>
   </div>
 
+  <!-- Message -->
   <div id="message"></div>
 
-  <div id="modal">
-    <div id="productModal" style="display:none;">
-      <h2 id="productTitle"></h2>
-      <p id="productPrice"></p>
-      <button class="modal-btn" onclick="addSelectedProduct()">Agregar al carrito</button>
-      <button class="modal-btn close-btn" onclick="closeModal()">Cerrar</button>
-    </div>
+  <!-- Key hint -->
+  <div id="key-hint">WASD / ↑↓←→ para moverse · Enter = caja</div>
 
-    <div id="receipt" style="display:none;">
-      <h2>Pedido confirmado</h2>
-      <p id="receiptText"></p>
-      <p><strong>Sus productos serán enviados a su casa.</strong></p>
-      <button class="modal-btn" onclick="closeModal()">Cerrar</button>
+</div><!-- /game -->
+
+<!-- PRODUCT MODAL -->
+<div id="modal-backdrop">
+  <div class="modal-card" id="product-modal">
+    <div class="modal-header">
+      <div class="modal-emoji" id="m-emoji">🍎</div>
+      <div class="modal-name" id="m-name">Producto</div>
+      <div class="modal-price" id="m-price">RD$0</div>
+    </div>
+    <div class="modal-body">
+      <div class="qty-row">
+        <button class="qty-btn" onclick="changeQty(-1)">−</button>
+        <div id="qty-display">1</div>
+        <button class="qty-btn" onclick="changeQty(1)">+</button>
+      </div>
+      <div class="modal-btns">
+        <button class="btn-add" onclick="addToCart()">AGREGAR AL CARRITO</button>
+        <button class="btn-close" onclick="closeModal()">✕</button>
+      </div>
     </div>
   </div>
+</div>
 
-  <script>
-    let player = { x: 1050, y: 1260 };
-    let cart = [];
-    let total = 0;
-    let selectedProduct = null;
+<!-- RECEIPT MODAL -->
+<div id="receipt-backdrop" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(6px);z-index:60;align-items:center;justify-content:center;">
+  <div class="receipt-card">
+    <div class="receipt-header">
+      <div class="receipt-store">THE <span>SUPER</span>MARKET</div>
+      <div class="receipt-date" id="r-date"></div>
+    </div>
+    <div class="receipt-body" id="r-body"></div>
+    <div class="receipt-total-row">
+      <span>TOTAL</span>
+      <span>RD$<span id="r-total">0</span></span>
+    </div>
+    <div class="receipt-footer">
+      <div class="receipt-thanks">¡Gracias por tu compra!<br>Tus productos serán enviados a tu dirección.</div>
+      <button class="btn-confirm" onclick="confirmOrder()">✓ CONFIRMAR PEDIDO</button>
+    </div>
+  </div>
+</div>
 
-    const playerEl = document.getElementById("player");
-    const cartIcon = document.getElementById("cartIcon");
-    const store = document.getElementById("store");
+<script>
+  // ── STATE ──
+  const STORE_W = 2600, STORE_H = 1700;
+  let player = { x: 1250, y: 1460 };
+  let cart = {};
+  let cartTotal = 0;
+  let selectedProduct = null;
+  let selectedQty = 1;
+  let moveInterval = null;
 
-    setTimeout(() => {
-      document.getElementById("loading").style.display = "none";
-      document.getElementById("intro").style.display = "flex";
-    }, 3200);
+  // ── ELEMENTS ──
+  const playerEl   = document.getElementById('player');
+  const shadowEl   = document.getElementById('player-shadow');
+  const cartFollow = document.getElementById('cart-follower');
+  const cartBadge  = document.getElementById('cart-badge');
+  const storeEl    = document.getElementById('store');
+  const minimapCanvas = document.getElementById('minimap-canvas');
+  const mmCtx = minimapCanvas.getContext('2d');
 
-    function startGame() {
-      document.getElementById("intro").style.display = "none";
-      document.getElementById("game").style.display = "block";
-      updatePlayer();
-      showMessage("Bienvenido a THE SUPERMARKET. Muévete, toca productos y ve a caja.");
-    }
-
-    function updatePlayer() {
-      playerEl.style.left = player.x + "px";
-      playerEl.style.top = player.y + "px";
-
-      cartIcon.style.left = (player.x - 8) + "px";
-      cartIcon.style.top = (player.y + 55) + "px";
-
-      const scale = window.innerWidth < 700 ? 0.65 : 0.78;
-      const offsetX = window.innerWidth / 2 - player.x * scale;
-      const offsetY = window.innerHeight / 2 - player.y * scale;
-
-      store.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${scale})`;
-    }
-
-    function move(dir) {
-      const speed = 45;
-
-      if (dir === "up") player.y -= speed;
-      if (dir === "down") player.y += speed;
-      if (dir === "left") player.x -= speed;
-      if (dir === "right") player.x += speed;
-
-      player.x = Math.max(70, Math.min(2180, player.x));
-      player.y = Math.max(70, Math.min(1380, player.y));
-
-      updatePlayer();
-    }
-
-    document.addEventListener("keydown", e => {
-      if (e.key === "ArrowUp" || e.key.toLowerCase() === "w") move("up");
-      if (e.key === "ArrowDown" || e.key.toLowerCase() === "s") move("down");
-      if (e.key === "ArrowLeft" || e.key.toLowerCase() === "a") move("left");
-      if (e.key === "ArrowRight" || e.key.toLowerCase() === "d") move("right");
-      if (e.key === "Enter") checkout();
-    });
-
-    function openProduct(name, price, emoji) {
-      selectedProduct = { name, price, emoji };
-
-      document.getElementById("productTitle").textContent = emoji + " " + name;
-      document.getElementById("productPrice").textContent = "Precio: RD$" + price;
-
-      document.getElementById("modal").style.display = "flex";
-      document.getElementById("productModal").style.display = "block";
-      document.getElementById("receipt").style.display = "none";
-    }
-
-    function addSelectedProduct() {
-      if (!selectedProduct) return;
-
-      cart.push(selectedProduct);
-      total += selectedProduct.price;
-
-      renderCart();
-      closeModal();
-      showMessage(selectedProduct.name + " agregado al carrito.");
-    }
-
-    function renderCart() {
-      document.getElementById("total").textContent = total;
-      const list = document.getElementById("cartList");
-
-      if (cart.length === 0) {
-        list.innerHTML = "Vacío";
-        return;
-      }
-
-      list.innerHTML = cart
-        .map((item, index) => `${index + 1}. ${item.emoji} ${item.name} - RD$${item.price}`)
-        .join("<br>");
-    }
-
-    function checkout() {
-      const nearCheckout =
-        player.x > 1700 && player.x < 2220 &&
-        player.y > 1000 && player.y < 1380;
-
-      if (!nearCheckout) {
-        showMessage("Debes acercarte a la caja para finalizar.");
-        return;
-      }
-
-      if (cart.length === 0) {
-        showMessage("Tu carrito está vacío.");
-        return;
-      }
-
-      document.getElementById("receiptText").innerHTML =
-        cart.map(item => `${item.emoji} ${item.name} - RD$${item.price}`).join("<br>") +
-        `<br><br>Total: <strong>RD$${total}</strong>`;
-
-      document.getElementById("modal").style.display = "flex";
-      document.getElementById("productModal").style.display = "none";
-      document.getElementById("receipt").style.display = "block";
-    }
-
-    function closeModal() {
-      document.getElementById("modal").style.display = "none";
-      document.getElementById("productModal").style.display = "none";
-      document.getElementById("receipt").style.display = "none";
-    }
-
-    function showMessage(text) {
-      const msg = document.getElementById("message");
-      msg.textContent = text;
-      msg.style.display = "block";
-
+  // ── LOADING ──
+  let pct = 0;
+  const pctEl = document.getElementById('load-pct');
+  const loadInterval = setInterval(() => {
+    pct = Math.min(100, pct + Math.random() * 8);
+    pctEl.textContent = Math.floor(pct) + '%';
+    if (pct >= 100) {
+      clearInterval(loadInterval);
       setTimeout(() => {
-        msg.style.display = "none";
-      }, 2600);
+        document.getElementById('loading').style.opacity = '0';
+        document.getElementById('loading').style.transition = 'opacity 0.5s';
+        setTimeout(() => {
+          document.getElementById('loading').style.display = 'none';
+          const intro = document.getElementById('intro');
+          intro.style.display = 'flex';
+          intro.style.opacity = '0';
+          intro.style.transition = 'opacity 0.6s';
+          requestAnimationFrame(() => { intro.style.opacity = '1'; });
+        }, 500);
+      }, 300);
+    }
+  }, 80);
+
+  // ── START ──
+  function startGame() {
+    const intro = document.getElementById('intro');
+    intro.style.opacity = '0';
+    setTimeout(() => {
+      intro.style.display = 'none';
+      const game = document.getElementById('game');
+      game.style.display = 'block';
+      game.style.opacity = '0';
+      game.style.transition = 'opacity 0.5s';
+      requestAnimationFrame(() => { game.style.opacity = '1'; });
+      updatePlayer();
+      drawMinimap();
+      showMessage('Bienvenido a THE SUPERMARKET — usa las flechas o WASD para moverte', 'info');
+    }, 400);
+  }
+
+  // ── PLAYER MOVEMENT ──
+  function updatePlayer() {
+    playerEl.style.left = player.x + 'px';
+    playerEl.style.top  = player.y + 'px';
+    shadowEl.style.left = (player.x + 6) + 'px';
+    shadowEl.style.top  = (player.y + 52) + 'px';
+    cartFollow.style.left = (player.x - 6) + 'px';
+    cartFollow.style.top  = (player.y + 56) + 'px';
+
+    const vw = window.innerWidth, vh = window.innerHeight;
+    const scale = vw < 700 ? 0.55 : vw < 1024 ? 0.68 : 0.8;
+    const ox = vw / 2 - player.x * scale;
+    const oy = vh / 2 - player.y * scale;
+    storeEl.style.transform = `translate(${ox}px,${oy}px) scale(${scale})`;
+    drawMinimap();
+  }
+
+  function move(dir) {
+    const spd = 50;
+    if (dir === 'up')    player.y -= spd;
+    if (dir === 'down')  player.y += spd;
+    if (dir === 'left')  player.x -= spd;
+    if (dir === 'right') player.x += spd;
+    player.x = Math.max(70, Math.min(STORE_W - 80, player.x));
+    player.y = Math.max(70, Math.min(STORE_H - 80, player.y));
+    updatePlayer();
+  }
+
+  // Keyboard
+  const keysDown = new Set();
+  document.addEventListener('keydown', e => {
+    if (['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','w','a','s','d','W','A','S','D'].includes(e.key)) {
+      e.preventDefault();
+      keysDown.add(e.key);
+    }
+    if (e.key === 'Enter') checkout();
+  });
+  document.addEventListener('keyup', e => keysDown.delete(e.key));
+
+  function processKeys() {
+    if (keysDown.has('ArrowUp') || keysDown.has('w') || keysDown.has('W')) move('up');
+    if (keysDown.has('ArrowDown') || keysDown.has('s') || keysDown.has('S')) move('down');
+    if (keysDown.has('ArrowLeft') || keysDown.has('a') || keysDown.has('A')) move('left');
+    if (keysDown.has('ArrowRight') || keysDown.has('d') || keysDown.has('D')) move('right');
+    requestAnimationFrame(processKeys);
+  }
+  requestAnimationFrame(processKeys);
+
+  // Touch hold
+  function startMove(dir) { stopMove(); moveInterval = setInterval(() => move(dir), 80); move(dir); }
+  function stopMove() { if (moveInterval) { clearInterval(moveInterval); moveInterval = null; } }
+
+  // ── MINIMAP ──
+  function drawMinimap() {
+    const W = 170, H = 130;
+    mmCtx.clearRect(0, 0, W, H);
+
+    // Background
+    mmCtx.fillStyle = '#1a1a1a';
+    mmCtx.fillRect(0, 0, W, H);
+
+    const sx = W / STORE_W, sy = H / STORE_H;
+
+    // Floor
+    mmCtx.fillStyle = '#2d2d28';
+    mmCtx.fillRect(4, 4, W - 8, H - 8);
+
+    // Shelves (approximate)
+    mmCtx.fillStyle = '#6b4a2a';
+    const shelfBoxes = [
+      [120,130,360,90],[120,310,360,90],[560,130,360,90],[560,310,360,90],
+      [1000,90,400,110],[1000,270,400,110],
+      [1480,130,340,90],[1480,310,340,90],
+      [1920,130,340,90],[1920,310,340,90],
+      [120,560,360,90],[560,560,360,90],[1000,560,380,90],[1480,560,360,90],[1920,560,340,90],
+      [120,820,360,90],[560,820,360,90],[1000,820,380,90],[1480,820,360,90],
+    ];
+    shelfBoxes.forEach(([x,y,w,h]) => mmCtx.fillRect(x*sx, y*sy, w*sx, h*sy));
+
+    // Checkout
+    mmCtx.fillStyle = '#2a2a28';
+    mmCtx.strokeStyle = '#f0e040';
+    mmCtx.lineWidth = 1;
+    mmCtx.fillRect(2090*sx, 1250*sy, 360*sx, 220*sy);
+    mmCtx.strokeRect(2090*sx, 1250*sy, 360*sx, 220*sy);
+
+    // Player dot
+    const px = player.x * sx;
+    const py = player.y * sy;
+    mmCtx.beginPath();
+    mmCtx.arc(px, py, 5, 0, Math.PI * 2);
+    mmCtx.fillStyle = '#f0e040';
+    mmCtx.fill();
+    mmCtx.beginPath();
+    mmCtx.arc(px, py, 8, 0, Math.PI * 2);
+    mmCtx.strokeStyle = 'rgba(240,224,64,0.3)';
+    mmCtx.lineWidth = 2;
+    mmCtx.stroke();
+
+    // Label
+    mmCtx.fillStyle = 'rgba(255,255,255,0.3)';
+    mmCtx.font = '9px DM Sans, Arial';
+    mmCtx.fillText('CAJA →', 2100*sx, 1370*sy);
+  }
+
+  // ── PRODUCT MODAL ──
+  function openProduct(name, emoji, price) {
+    selectedProduct = { name, emoji, price };
+    selectedQty = 1;
+    document.getElementById('m-emoji').textContent = emoji;
+    document.getElementById('m-name').textContent = name;
+    document.getElementById('m-price').textContent = 'RD$' + price;
+    document.getElementById('qty-display').textContent = '1';
+    const bd = document.getElementById('modal-backdrop');
+    bd.style.display = 'flex';
+  }
+
+  function changeQty(delta) {
+    selectedQty = Math.max(1, Math.min(20, selectedQty + delta));
+    document.getElementById('qty-display').textContent = selectedQty;
+  }
+
+  function addToCart() {
+    if (!selectedProduct) return;
+    const key = selectedProduct.name;
+    if (cart[key]) {
+      cart[key].qty += selectedQty;
+    } else {
+      cart[key] = { ...selectedProduct, qty: selectedQty };
+    }
+    cartTotal += selectedProduct.price * selectedQty;
+    renderCart();
+    closeModal();
+    showMessage(selectedProduct.emoji + ' ' + selectedProduct.name + ' × ' + selectedQty + ' agregado', 'success');
+  }
+
+  function renderCart() {
+    document.getElementById('total').textContent = cartTotal;
+    const list = document.getElementById('cart-list');
+    const keys = Object.keys(cart);
+
+    // Badge
+    const totalItems = keys.reduce((s, k) => s + cart[k].qty, 0);
+    if (totalItems > 0) {
+      cartBadge.style.display = 'flex';
+      cartBadge.textContent = totalItems > 9 ? '9+' : totalItems;
+    } else {
+      cartBadge.style.display = 'none';
     }
 
-    window.addEventListener("resize", updatePlayer);
-  </script>
+    if (keys.length === 0) { list.innerHTML = '<div class="cart-empty">Vacío</div>'; return; }
 
+    list.innerHTML = keys.map(k => {
+      const item = cart[k];
+      return `<div class="cart-item">
+        <div class="ci-emoji">${item.emoji}</div>
+        <div class="ci-name">${item.name}</div>
+        <div class="ci-qty">×${item.qty}</div>
+        <div class="ci-price">RD$${item.price * item.qty}</div>
+      </div>`;
+    }).join('');
+  }
+
+  function closeModal() {
+    document.getElementById('modal-backdrop').style.display = 'none';
+  }
+
+  // ── CHECKOUT ──
+  function checkout() {
+    const near = player.x > 1950 && player.x < 2500 && player.y > 1100 && player.y < 1650;
+    if (!near) {
+      showMessage('🧾 Dirígete a la CAJA (esquina inferior derecha)', 'warning');
+      return;
+    }
+    if (Object.keys(cart).length === 0) {
+      showMessage('Tu carrito está vacío', 'warning');
+      return;
+    }
+
+    // Build receipt
+    const now = new Date();
+    document.getElementById('r-date').textContent =
+      now.toLocaleDateString('es-DO', { weekday:'long', year:'numeric', month:'long', day:'numeric' }) +
+      ' · ' + now.toLocaleTimeString('es-DO', { hour:'2-digit', minute:'2-digit' });
+    document.getElementById('r-total').textContent = cartTotal;
+
+    const body = document.getElementById('r-body');
+    body.innerHTML = Object.keys(cart).map(k => {
+      const item = cart[k];
+      return `<div class="receipt-line">
+        <span>${item.emoji} ${item.name} ×${item.qty}</span>
+        <span>RD$${item.price * item.qty}</span>
+      </div>`;
+    }).join('');
+
+    const rb = document.getElementById('receipt-backdrop');
+    rb.style.display = 'flex';
+  }
+
+  function confirmOrder() {
+    document.getElementById('receipt-backdrop').style.display = 'none';
+    cart = {};
+    cartTotal = 0;
+    renderCart();
+    showMessage('✅ ¡Pedido confirmado! Tus productos están en camino.', 'success');
+  }
+
+  // ── MESSAGES ──
+  let msgTimeout;
+  function showMessage(text, type = 'info') {
+    const msg = document.getElementById('message');
+    msg.textContent = text;
+    msg.className = type;
+    msg.style.display = 'block';
+    clearTimeout(msgTimeout);
+    msgTimeout = setTimeout(() => { msg.style.display = 'none'; }, 3200);
+  }
+
+  // Close modal on backdrop click
+  document.getElementById('modal-backdrop').addEventListener('click', e => {
+    if (e.target === document.getElementById('modal-backdrop')) closeModal();
+  });
+  document.getElementById('receipt-backdrop').addEventListener('click', e => {
+    if (e.target === document.getElementById('receipt-backdrop'))
+      document.getElementById('receipt-backdrop').style.display = 'none';
+  });
+
+  window.addEventListener('resize', updatePlayer);
+</script>
 </body>
 </html>
