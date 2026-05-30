@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>THE SUPERMARKET</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      overflow: hidden;
+      background: #050505;
+      color: white;
+    }
+
+    #loading {
+      position: fixed;
+      inset: 0;
+      background: #050505;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 50;
+    }
+
+    #loading h1 {
+      font-size: 38px;
+      letter-spacing: 4px;
+      margin-bottom: 25px;
+    }
+
+    .bar {
+      width: 280px;
+      height: 12px;
+      border: 1px solid white;
+      border-radius: 20px;
+      overflow: hidden;
+    }
+
+    .fill {
+      width: 0%;
+      height: 100%;
+      background: white;
+      animation: load 3s forwards;
+    }
+
+    @keyframes load {
+      to { width: 100%; }
+    }
+
+    #intro {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle, #202020, #000);
+      z-index: 40;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #intro h1 {
+      font-size: 48px;
+      letter-spacing: 5px;
+      margin-bottom: 15px;
+    }
+
+    #intro p {
+      margin-bottom: 30px;
+      color: #ccc;
+    }
+
+    #intro button {
+      padding: 15px 45px;
+      font-size: 20px;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      background: white;
+      color: black;
+      font-weight: bold;
+    }
+
+    #game {
+      display: none;
+      width: 100vw;
+      height: 100vh;
+      position: relative;
+      background: #111;
+    }
+
+    #store {
+      position: absolute;
+      width: 2300px;
+      height: 1500px;
+      background:
+        linear-gradient(90deg, #d0d0d0 1px, transparent 1px),
+        linear-gradient(#d0d0d0 1px, transparent 1px),
+        #e7e7e7;
+      background-size: 80px 80px;
+      transform-origin: top left;
+    }
+
+    .wall {
+      position: absolute;
+      background: #333;
+      z-index: 2;
+    }
+
+    .top-wall { left: 0; top: 0; width: 2300px; height: 45px; }
+    .bottom-wall { left: 0; bottom: 0; width: 2300px; height: 45px; }
+    .left-wall { left: 0; top: 0; width: 45px; height: 1500px; }
+    .right-wall { right: 0; top: 0; width: 45px; height: 1500px; }
+
+    #entrance {
+      position: absolute;
+      left: 930px;
+      top: 1370px;
+      width: 380px;
+      height: 80px;
+      background: #111;
+      border: 4px solid white;
+      border-radius: 18px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 26px;
+      font-weight: bold;
+      z-index: 3;
+    }
+
+    .section-title {
+      position: absolute;
+      color: #222;
+      font-size: 22px;
+      font-weight: bold;
+    }
+
+    .shelf {
+      position: absolute;
+      width: 330px;
+      height: 95px;
+      background: #8b5a2b;
+      border: 5px solid #5a3517;
+      border-radius: 14px;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      z-index: 3;
+      box-shadow: 0 8px 15px rgba(0,0,0,0.25);
+    }
+
+    .shelf::before {
+      content: attr(data-name);
+      position: absolute;
+      top: -34px;
+      left: 0;
+      width: 100%;
+      text-align: center;
+      color: #111;
+      font-weight: bold;
+      font-size: 18px;
+    }
+
+    .product {
+      width: 52px;
+      height: 52px;
+      border-radius: 12px;
+      background: white;
+      color: black;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 28px;
+      cursor: pointer;
+      transition: 0.2s;
+      box-shadow: 0 3px 8px rgba(0,0,0,.25);
+    }
+
+    .product:hover {
+      transform: scale(1.18);
+    }
+
+    .aisle {
+      position: absolute;
+      color: #777;
+      font-size: 16px;
+      font-weight: bold;
+      letter-spacing: 2px;
+    }
+
+    #player {
+      position: absolute;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: #111;
+      border: 4px solid white;
+      z-index: 8;
+      box-shadow: 0 0 12px rgba(0,0,0,0.6);
+    }
+
+    #player::after {
+      content: "👤";
+      position: absolute;
+      left: 8px;
+      top: 8px;
+      font-size: 26px;
+    }
+
+    #cartIcon {
+      position: absolute;
+      width: 55px;
+      height: 38px;
+      background: silver;
+      border: 3px solid #333;
+      border-radius: 9px;
+      z-index: 7;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+    }
+
+    #checkout {
+      position: absolute;
+      left: 1830px;
+      top: 1120px;
+      width: 330px;
+      height: 180px;
+      background: #111;
+      border: 5px solid #fff;
+      border-radius: 18px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 30px;
+      font-weight: bold;
+      z-index: 4;
+      box-shadow: 0 10px 25px rgba(0,0,0,.4);
+    }
+
+    #hud {
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      background: rgba(0,0,0,.78);
+      padding: 15px;
+      border-radius: 15px;
+      z-index: 20;
+      width: 280px;
+      max-height: 320px;
+    }
+
+    #hud h2 {
+      margin-bottom: 10px;
+      font-size: 20px;
+    }
+
+    #cartList {
+      font-size: 14px;
+      margin-top: 10px;
+      max-height: 190px;
+      overflow-y: auto;
+      line-height: 1.5;
+    }
+
+    #minimap {
+      position: fixed;
+      top: 15px;
+      right: 15px;
+      background: rgba(0,0,0,.78);
+      border-radius: 15px;
+      padding: 12px;
+      z-index: 20;
+      width: 180px;
+      font-size: 13px;
+    }
+
+    #minimap h3 {
+      margin-bottom: 8px;
+      font-size: 15px;
+    }
+
+    #controls {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 25;
+      display: grid;
+      grid-template-columns: repeat(3, 58px);
+      gap: 8px;
+    }
+
+    .ctrl {
+      width: 58px;
+      height: 58px;
+      border-radius: 14px;
+      border: none;
+      background: rgba(0,0,0,.78);
+      color: white;
+      font-size: 25px;
+      cursor: pointer;
+    }
+
+    #message {
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: black;
+      padding: 14px 25px;
+      border-radius: 25px;
+      z-index: 30;
+      display: none;
+      max-width: 90%;
+      text-align: center;
+    }
+
+    #modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.85);
+      z-index: 60;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #productModal,
+    #receipt {
+      background: white;
+      color: black;
+      width: 90%;
+      max-width: 430px;
+      padding: 25px;
+      border-radius: 22px;
+      text-align: center;
+    }
+
+    #productModal h2,
+    #receipt h2 {
+      margin-bottom: 15px;
+    }
+
+    .modal-btn {
+      margin-top: 15px;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 20px;
+      background: black;
+      color: white;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .close-btn {
+      background: #444;
+    }
+
+    @media (max-width: 700px) {
+      #intro h1 {
+        font-size: 34px;
+      }
+
+      #hud {
+        width: 200px;
+        font-size: 12px;
+      }
+
+      #minimap {
+        display: none;
+      }
+
+      #controls {
+        right: 12px;
+        bottom: 12px;
+        grid-template-columns: repeat(3, 50px);
+      }
+
+      .ctrl {
+        width: 50px;
+        height: 50px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="loading">
+    <h1>DIGITALISING...</h1>
+    <div class="bar"><div class="fill"></div></div>
+  </div>
+
+  <div id="intro">
+    <h1>THE SUPERMARKET</h1>
+    <p>Compra dentro de una sucursal digital interactiva</p>
+    <button onclick="startGame()">ENTRAR</button>
+  </div>
+
+  <div id="game">
+    <div id="store">
+
+      <div class="wall top-wall"></div>
+      <div class="wall bottom-wall"></div>
+      <div class="wall left-wall"></div>
+      <div class="wall right-wall"></div>
+
+      <div id="entrance">🚪 ENTRADA PRINCIPAL</div>
+
+      <div class="aisle" style="left:260px; top:100px;">PASILLO 1</div>
+      <div class="aisle" style="left:720px; top:100px;">PASILLO 2</div>
+      <div class="aisle" style="left:1180px; top:100px;">PASILLO 3</div>
+      <div class="aisle" style="left:1640px; top:100px;">PASILLO 4</div>
+
+      <div class="shelf" data-name="🍎 Frutas" style="left:180px; top:190px;">
+        <div class="product" onclick="openProduct('Manzana', 35, '🍎')">🍎</div>
+        <div class="product" onclick="openProduct('Banana', 25, '🍌')">🍌</div>
+        <div class="product" onclick="openProduct('Uvas', 120, '🍇')">🍇</div>
+        <div class="product" onclick="openProduct('Naranja', 40, '🍊')">🍊</div>
+      </div>
+
+      <div class="shelf" data-name="🧃 Bebidas" style="left:640px; top:190px;">
+        <div class="product" onclick="openProduct('Agua', 30, '💧')">💧</div>
+        <div class="product" onclick="openProduct('Jugo', 75, '🧃')">🧃</div>
+        <div class="product" onclick="openProduct('Café', 180, '☕')">☕</div>
+        <div class="product" onclick="openProduct('Refresco', 95, '🥤')">🥤</div>
+      </div>
+
+      <div class="shelf" data-name="🍞 Panadería" style="left:1100px; top:190px;">
+        <div class="product" onclick="openProduct('Pan', 60, '🍞')">🍞</div>
+        <div class="product" onclick="openProduct('Bizcocho', 250, '🍰')">🍰</div>
+        <div class="product" onclick="openProduct('Dona', 80, '🍩')">🍩</div>
+        <div class="product" onclick="openProduct('Croissant', 95, '🥐')">🥐</div>
+      </div>
+
+      <div class="shelf" data-name="🥩 Carnes" style="left:1560px; top:190px;">
+        <div class="product" onclick="openProduct('Pollo', 280, '🍗')">🍗</div>
+        <div class="product" onclick="openProduct('Carne', 350, '🥩')">🥩</div>
+        <div class="product" onclick="openProduct('Pescado', 300, '🐟')">🐟</div>
+        <div class="product" onclick="openProduct('Hamburguesa', 190, '🍔')">🍔</div>
+      </div>
+
+      <div class="shelf" data-name="🥛 Lácteos" style="left:180px; top:530px;">
+        <div class="product" onclick="openProduct('Leche', 95, '🥛')">🥛</div>
+        <div class="product" onclick="openProduct('Queso', 160, '🧀')">🧀</div>
+        <div class="product" onclick="openProduct('Huevos', 220, '🥚')">🥚</div>
+        <div class="product" onclick="openProduct('Yogurt', 70, '🍶')">🍶</div>
+      </div>
+
+      <div class="shelf" data-name="🧼 Limpieza" style="left:640px; top:530px;">
+        <div class="product" onclick="openProduct('Jabón', 75, '🧼')">🧼</div>
+        <div class="product" onclick="openProduct('Papel', 140, '🧻')">🧻</div>
+        <div class="product" onclick="openProduct('Detergente', 230, '🧴')">🧴</div>
+        <div class="product" onclick="openProduct('Escoba', 180, '🧹')">🧹</div>
+      </div>
+
+      <div class="shelf" data-name="🍚 Básicos" style="left:1100px; top:530px;">
+        <div class="product" onclick="openProduct('Arroz', 180, '🍚')">🍚</div>
+        <div class="product" onclick="openProduct('Aceite', 240, '🛢️')">🛢️</div>
+        <div class="product" onclick="openProduct('Sal', 45, '🧂')">🧂</div>
+        <div class="product" onclick="openProduct('Habichuelas', 120, '🫘')">🫘</div>
+      </div>
+
+      <div class="shelf" data-name="🍫 Snacks" style="left:1560px; top:530px;">
+        <div class="product" onclick="openProduct('Chocolate', 90, '🍫')">🍫</div>
+        <div class="product" onclick="openProduct('Galletas', 85, '🍪')">🍪</div>
+        <div class="product" onclick="openProduct('Helado', 210, '🍦')">🍦</div>
+        <div class="product" onclick="openProduct('Popcorn', 75, '🍿')">🍿</div>
+      </div>
+
+      <div class="shelf" data-name="🥫 Enlatados" style="left:420px; top:870px;">
+        <div class="product" onclick="openProduct('Atún', 95, '🥫')">🥫</div>
+        <div class="product" onclick="openProduct('Salsa', 70, '🍅')">🍅</div>
+        <div class="product" onclick="openProduct('Maíz', 85, '🌽')">🌽</div>
+        <div class="product" onclick="openProduct('Sopa', 110, '🍲')">🍲</div>
+      </div>
+
+      <div class="shelf" data-name="🧴 Cuidado Personal" style="left:980px; top:870px;">
+        <div class="product" onclick="openProduct('Shampoo', 260, '🧴')">🧴</div>
+        <div class="product" onclick="openProduct('Pasta Dental', 130, '🪥')">🪥</div>
+        <div class="product" onclick="openProduct('Perfume', 450, '🧴')">🧴</div>
+        <div class="product" onclick="openProduct('Crema', 220, '🧼')">🧼</div>
+      </div>
+
+      <div id="checkout" onclick="checkout()">CAJA 🧾</div>
+
+      <div id="player"></div>
+      <div id="cartIcon">🛒</div>
+
+    </div>
+  </div>
+
+  <div id="hud">
+    <h2>🛒 Carrito</h2>
+    <p>Total: RD$<span id="total">0</span></p>
+    <div id="cartList">Vacío</div>
+  </div>
+
+  <div id="minimap">
+    <h3>🗺️ Mapa</h3>
+    <p>🍎 Frutas</p>
+    <p>🧃 Bebidas</p>
+    <p>🥩 Carnes</p>
+    <p>🧾 Caja</p>
+  </div>
+
+  <div id="controls">
+    <div></div><button class="ctrl" onclick="move('up')">▲</button><div></div>
+    <button class="ctrl" onclick="move('left')">◀</button>
+    <button class="ctrl" onclick="checkout()">🧾</button>
+    <button class="ctrl" onclick="move('right')">▶</button>
+    <div></div><button class="ctrl" onclick="move('down')">▼</button><div></div>
+  </div>
+
+  <div id="message"></div>
+
+  <div id="modal">
+    <div id="productModal" style="display:none;">
+      <h2 id="productTitle"></h2>
+      <p id="productPrice"></p>
+      <button class="modal-btn" onclick="addSelectedProduct()">Agregar al carrito</button>
+      <button class="modal-btn close-btn" onclick="closeModal()">Cerrar</button>
+    </div>
+
+    <div id="receipt" style="display:none;">
+      <h2>Pedido confirmado</h2>
+      <p id="receiptText"></p>
+      <p><strong>Sus productos serán enviados a su casa.</strong></p>
+      <button class="modal-btn" onclick="closeModal()">Cerrar</button>
+    </div>
+  </div>
+
+  <script>
+    let player = { x: 1050, y: 1260 };
+    let cart = [];
+    let total = 0;
+    let selectedProduct = null;
+
+    const playerEl = document.getElementById("player");
+    const cartIcon = document.getElementById("cartIcon");
+    const store = document.getElementById("store");
+
+    setTimeout(() => {
+      document.getElementById("loading").style.display = "none";
+      document.getElementById("intro").style.display = "flex";
+    }, 3200);
+
+    function startGame() {
+      document.getElementById("intro").style.display = "none";
+      document.getElementById("game").style.display = "block";
+      updatePlayer();
+      showMessage("Bienvenido a THE SUPERMARKET. Muévete, toca productos y ve a caja.");
+    }
+
+    function updatePlayer() {
+      playerEl.style.left = player.x + "px";
+      playerEl.style.top = player.y + "px";
+
+      cartIcon.style.left = (player.x - 8) + "px";
+      cartIcon.style.top = (player.y + 55) + "px";
+
+      const scale = window.innerWidth < 700 ? 0.65 : 0.78;
+      const offsetX = window.innerWidth / 2 - player.x * scale;
+      const offsetY = window.innerHeight / 2 - player.y * scale;
+
+      store.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${scale})`;
+    }
+
+    function move(dir) {
+      const speed = 45;
+
+      if (dir === "up") player.y -= speed;
+      if (dir === "down") player.y += speed;
+      if (dir === "left") player.x -= speed;
+      if (dir === "right") player.x += speed;
+
+      player.x = Math.max(70, Math.min(2180, player.x));
+      player.y = Math.max(70, Math.min(1380, player.y));
+
+      updatePlayer();
+    }
+
+    document.addEventListener("keydown", e => {
+      if (e.key === "ArrowUp" || e.key.toLowerCase() === "w") move("up");
+      if (e.key === "ArrowDown" || e.key.toLowerCase() === "s") move("down");
+      if (e.key === "ArrowLeft" || e.key.toLowerCase() === "a") move("left");
+      if (e.key === "ArrowRight" || e.key.toLowerCase() === "d") move("right");
+      if (e.key === "Enter") checkout();
+    });
+
+    function openProduct(name, price, emoji) {
+      selectedProduct = { name, price, emoji };
+
+      document.getElementById("productTitle").textContent = emoji + " " + name;
+      document.getElementById("productPrice").textContent = "Precio: RD$" + price;
+
+      document.getElementById("modal").style.display = "flex";
+      document.getElementById("productModal").style.display = "block";
+      document.getElementById("receipt").style.display = "none";
+    }
+
+    function addSelectedProduct() {
+      if (!selectedProduct) return;
+
+      cart.push(selectedProduct);
+      total += selectedProduct.price;
+
+      renderCart();
+      closeModal();
+      showMessage(selectedProduct.name + " agregado al carrito.");
+    }
+
+    function renderCart() {
+      document.getElementById("total").textContent = total;
+      const list = document.getElementById("cartList");
+
+      if (cart.length === 0) {
+        list.innerHTML = "Vacío";
+        return;
+      }
+
+      list.innerHTML = cart
+        .map((item, index) => `${index + 1}. ${item.emoji} ${item.name} - RD$${item.price}`)
+        .join("<br>");
+    }
+
+    function checkout() {
+      const nearCheckout =
+        player.x > 1700 && player.x < 2220 &&
+        player.y > 1000 && player.y < 1380;
+
+      if (!nearCheckout) {
+        showMessage("Debes acercarte a la caja para finalizar.");
+        return;
+      }
+
+      if (cart.length === 0) {
+        showMessage("Tu carrito está vacío.");
+        return;
+      }
+
+      document.getElementById("receiptText").innerHTML =
+        cart.map(item => `${item.emoji} ${item.name} - RD$${item.price}`).join("<br>") +
+        `<br><br>Total: <strong>RD$${total}</strong>`;
+
+      document.getElementById("modal").style.display = "flex";
+      document.getElementById("productModal").style.display = "none";
+      document.getElementById("receipt").style.display = "block";
+    }
+
+    function closeModal() {
+      document.getElementById("modal").style.display = "none";
+      document.getElementById("productModal").style.display = "none";
+      document.getElementById("receipt").style.display = "none";
+    }
+
+    function showMessage(text) {
+      const msg = document.getElementById("message");
+      msg.textContent = text;
+      msg.style.display = "block";
+
+      setTimeout(() => {
+        msg.style.display = "none";
+      }, 2600);
+    }
+
+    window.addEventListener("resize", updatePlayer);
+  </script>
+
+</body>
+</html>
