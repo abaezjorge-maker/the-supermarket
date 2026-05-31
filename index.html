@@ -1,73 +1,69 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>THE SUPERMARKET 3D (con detección móvil)</title>
-    <!--
-      Esta plantilla incluye una capa de bloqueo para móviles. Si se detecta un dispositivo
-      móvil o una pantalla pequeña, se mostrará un aviso informando que la versión 3D está
-      disponible solo en escritorio. Puede redirigir a una versión 2.5D o simplemente
-      mostrar este aviso.
-    -->
-    <style>
-      /* Estilo básico para el aviso de móviles */
-      #mobileAlert {
-        display: none;
-        position: fixed;
-        left: 0;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        background: #020617;
-        color: #fff;
-        z-index: 9999;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        padding: 20px;
-        font-size: 1.2rem;
-      }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>THE SUPERMARKET 3D</title>
+  <!-- Incluye aquí todos tus estilos CSS y scripts de Three.js según tu versión actual -->
+  <style>
+    /* Ejemplo de estilos básicos; reemplaza con los de tu proyecto */
+    body {
+      margin: 0;
+      background: #020617;
+      color: #fff;
+      font-family: sans-serif;
+    }
+    #canvas3d {
+      width: 100%;
+      height: 100vh;
+      display: block;
+    }
+  </style>
 </head>
-<body>
+<body onload="init3DSupermarket()">
 
-    <!-- Aviso para usuarios móviles -->
-    <div id="mobileAlert">
-        <div>
-            <p><strong>⚠️ Esta versión 3D solo está disponible en ordenadores.</strong></p>
-            <p>En tu teléfono móvil puedes usar la versión 2.5D de la página o visitar el
-            sitio más adelante desde un equipo de escritorio.</p>
-        </div>
-    </div>
+  <!-- Contenedor o canvas para Three.js -->
+  <canvas id="canvas3d"></canvas>
 
-    <!--
-      Aquí debe ir el contenido de tu página 3D existente (escena, geometrías,
-      cámaras, etc.). Copia y pega el contenido de tu archivo actual entre este
-      comentario y la etiqueta de cierre </body>. Asegúrate de que todas las
-      referencias a Three.js y al código de inicialización sigan funcionando
-      correctamente. La función init3DSupermarket se encargará de verificar
-      si se debe mostrar el aviso para móviles.
-    -->
-
-    <script>
-      // Función que detecta si el dispositivo es móvil o la pantalla es pequeña
-      function init3DSupermarket() {
-        var isMobile = /Mobi|Android/i.test(navigator.userAgent) || window.innerWidth < 800;
-        if (isMobile) {
-          document.getElementById('mobileAlert').style.display = 'flex';
-          return;
-        }
-        // Aquí puedes llamar a tu función de inicialización de la escena 3D existente,
-        // por ejemplo: startGame() o init() según el código que ya tengas.
-        if (typeof startGame === 'function') {
-          startGame();
-        }
+  <script>
+    function init3DSupermarket() {
+      // Detectar si el dispositivo es móvil o el ancho de pantalla es pequeño
+      const isMobile = /Mobi/i.test(navigator.userAgent) || window.innerWidth < 800;
+      if (isMobile) {
+        // Redirigir a la versión 2.5 D automáticamente
+        window.location.href = "index.html";
+        return;
       }
 
-      // Ejecutar la detección cuando la página se carga
-      window.addEventListener('load', init3DSupermarket);
-    </script>
+      // A partir de aquí inicializa tu escena Three.js como en tu página original
+      // Este bloque debería contener tu código actual: renderer, escena, cámara, etc.
+      // Ejemplo mínimo:
+      const canvas = document.getElementById('canvas3d');
+      const renderer = new THREE.WebGLRenderer({ canvas });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+      camera.position.set(0, 2, 5);
+
+      const geometry = new THREE.BoxGeometry(1, 1, 1);
+      const material = new THREE.MeshBasicMaterial({ color: 0x67e8f9 });
+      const cube = new THREE.Mesh(geometry, material);
+      scene.add(cube);
+
+      function animate() {
+        requestAnimationFrame(animate);
+        cube.rotation.y += 0.01;
+        renderer.render(scene, camera);
+      }
+      animate();
+    }
+
+    // Ajustar el tamaño del renderer al redimensionar la ventana
+    window.addEventListener('resize', function() {
+      // Actualiza el renderer y la cámara si es necesario
+    });
+  </script>
+
 </body>
 </html>
