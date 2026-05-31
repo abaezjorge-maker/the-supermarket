@@ -1,70 +1,66 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>THE SUPERMARKET 3D Alpha Pro</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THE SUPERMARKET 3D Stable</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
 body{overflow:hidden;background:#050505;color:white}
 #startScreen{
-  position:fixed;inset:0;z-index:10;background:radial-gradient(circle,#1f2937,#020617);
-  display:flex;align-items:center;justify-content:center;text-align:center;padding:25px
+  position:fixed;inset:0;background:radial-gradient(circle,#1e293b,#020617);
+  z-index:50;display:flex;align-items:center;justify-content:center;text-align:center;padding:20px
 }
 .startBox{
-  max-width:560px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);
-  border-radius:28px;padding:35px;backdrop-filter:blur(16px);box-shadow:0 30px 80px rgba(0,0,0,.45)
+  width:92%;max-width:520px;background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.16);border-radius:24px;padding:32px
 }
-.startBox h1{font-size:42px;letter-spacing:4px;margin-bottom:10px;color:#67e8f9}
-.startBox p{color:#cbd5e1;margin:12px 0;line-height:1.5}
+.startBox h1{font-size:38px;color:#67e8f9;letter-spacing:3px;margin-bottom:12px}
+.startBox p{color:#cbd5e1;line-height:1.5;margin-bottom:12px}
 .startBox button{
-  margin-top:18px;padding:15px 42px;border:none;border-radius:999px;background:#67e8f9;
-  color:#020617;font-weight:900;font-size:18px;cursor:pointer
+  padding:14px 36px;border:none;border-radius:999px;background:#67e8f9;
+  color:#020617;font-weight:900;font-size:18px;cursor:pointer;margin-top:10px
 }
 #hud{
-  position:fixed;top:15px;left:15px;z-index:5;background:rgba(0,0,0,.68);
-  border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:14px;width:295px;
-  backdrop-filter:blur(12px)
+  position:fixed;top:15px;left:15px;z-index:20;background:rgba(0,0,0,.72);
+  border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:14px;width:280px
 }
-#hud h2{font-size:18px;margin-bottom:8px;color:#67e8f9}
-#cartList{font-size:13px;color:#e2e8f0;line-height:1.45;max-height:170px;overflow-y:auto;margin-top:8px}
+#hud h2{color:#67e8f9;font-size:18px;margin-bottom:8px}
+#cartList{font-size:13px;line-height:1.5;max-height:160px;overflow:auto;margin-top:8px;color:#e2e8f0}
 #hint{
-  position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:5;
-  background:rgba(0,0,0,.75);padding:12px 20px;border-radius:999px;color:#e2e8f0;
-  border:1px solid rgba(255,255,255,.12);text-align:center;max-width:92%
-}
-#crosshair{
-  position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);
-  width:18px;height:18px;border:2px solid rgba(255,255,255,.75);border-radius:50%;z-index:4;pointer-events:none
+  position:fixed;left:50%;bottom:18px;transform:translateX(-50%);
+  background:rgba(0,0,0,.78);border:1px solid rgba(255,255,255,.14);
+  padding:12px 18px;border-radius:999px;z-index:20;max-width:92%;text-align:center
 }
 #modal{
-  display:none;position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.75);
-  align-items:center;justify-content:center;padding:20px
+  display:none;position:fixed;inset:0;background:rgba(0,0,0,.78);
+  z-index:70;align-items:center;justify-content:center;padding:20px
 }
 .modalBox{
-  width:90%;max-width:430px;background:white;color:#020617;border-radius:24px;padding:26px;text-align:center
+  background:white;color:#020617;border-radius:22px;padding:25px;
+  width:92%;max-width:420px;text-align:center
 }
 .modalBox h2{margin-bottom:12px}
-.modalBox p{margin-bottom:10px}
+.modalBox p{margin-bottom:14px;line-height:1.5}
 .modalBox button{
-  padding:12px 20px;border:none;border-radius:16px;font-weight:800;cursor:pointer;margin:6px
+  border:none;border-radius:14px;padding:12px 20px;font-weight:900;cursor:pointer;margin:5px
 }
-.addBtn{background:#020617;color:white}
+#mainBtn{background:#020617;color:white}
 .closeBtn{background:#e5e7eb;color:#111827}
 #mobileControls{
-  position:fixed;right:15px;bottom:75px;z-index:6;display:grid;
-  grid-template-columns:repeat(3,54px);gap:8px
+  position:fixed;right:14px;bottom:72px;z-index:25;display:grid;
+  grid-template-columns:repeat(3,52px);gap:8px
 }
 .ctrl{
-  width:54px;height:54px;border:none;border-radius:15px;background:rgba(0,0,0,.68);
-  color:white;font-size:24px;border:1px solid rgba(255,255,255,.12)
+  width:52px;height:52px;border-radius:14px;border:1px solid rgba(255,255,255,.15);
+  background:rgba(0,0,0,.72);color:white;font-size:22px
 }
 #lookControls{
-  position:fixed;left:15px;bottom:75px;z-index:6;display:flex;gap:8px
+  position:fixed;left:14px;bottom:72px;z-index:25;display:flex;gap:8px
 }
 .look{
-  width:54px;height:54px;border:none;border-radius:15px;background:rgba(0,0,0,.68);
-  color:white;font-size:22px;border:1px solid rgba(255,255,255,.12)
+  width:52px;height:52px;border-radius:14px;border:1px solid rgba(255,255,255,.15);
+  background:rgba(0,0,0,.72);color:white;font-size:22px
 }
 @media(min-width:800px){#mobileControls,#lookControls{display:none}}
 </style>
@@ -74,8 +70,8 @@ body{overflow:hidden;background:#050505;color:white}
 <div id="startScreen">
   <div class="startBox">
     <h1>THE SUPERMARKET</h1>
-    <p>Versión 3D Alpha Pro</p>
-    <p>WASD/flechas para moverte · Q/E para girar · Enter para interactuar · Acércate a productos o a la caja.</p>
+    <p>Versión 3D estable.</p>
+    <p>WASD/Flechas para moverte · Q/E para girar · Enter para interactuar.</p>
     <button onclick="startGame()">ENTRAR</button>
   </div>
 </div>
@@ -86,8 +82,7 @@ body{overflow:hidden;background:#050505;color:white}
   <div id="cartList">Vacío</div>
 </div>
 
-<div id="crosshair"></div>
-<div id="hint">Pulsa ENTRAR para comenzar</div>
+<div id="hint">Pulsa ENTRAR para comenzar.</div>
 
 <div id="mobileControls">
   <div></div><button class="ctrl" ontouchstart="press('forward')" ontouchend="release('forward')">▲</button><div></div>
@@ -105,8 +100,8 @@ body{overflow:hidden;background:#050505;color:white}
 <div id="modal">
   <div class="modalBox">
     <h2 id="modalTitle"></h2>
-    <p id="modalPrice"></p>
-    <button class="addBtn" id="primaryBtn" onclick="primaryAction()">Agregar</button>
+    <p id="modalText"></p>
+    <button id="mainBtn" onclick="mainAction()">Agregar</button>
     <button class="closeBtn" onclick="closeModal()">Cerrar</button>
   </div>
 </div>
@@ -116,462 +111,227 @@ body{overflow:hidden;background:#050505;color:white}
 let scene,camera,renderer;
 let player={x:0,z:22,rot:Math.PI};
 let keys={};
-let products=[];
-let interactionTarget=null;
 let cart=[];
 let total=0;
+let products=[];
+let currentTarget=null;
+let checkoutBox=null;
 let gameStarted=false;
 
-const productData=[
-  {name:"Manzana",price:35,emoji:"🍎",x:-12,z:8,color:0xef4444,type:"sphere"},
-  {name:"Banana",price:25,emoji:"🍌",x:-11,z:8,color:0xfacc15,type:"box"},
-  {name:"Uvas",price:120,emoji:"🍇",x:-10,z:8,color:0x7c3aed,type:"sphere"},
-  {name:"Agua",price:30,emoji:"💧",x:-5,z:8,color:0x38bdf8,type:"bottle"},
-  {name:"Jugo",price:75,emoji:"🧃",x:-4,z:8,color:0xfb923c,type:"box"},
-  {name:"Refresco",price:95,emoji:"🥤",x:-3,z:8,color:0xef4444,type:"bottle"},
-
-  {name:"Pan",price:60,emoji:"🍞",x:2,z:8,color:0xd97706,type:"box"},
-  {name:"Bizcocho",price:250,emoji:"🍰",x:3,z:8,color:0xf9a8d4,type:"box"},
-  {name:"Dona",price:80,emoji:"🍩",x:4,z:8,color:0xb45309,type:"torus"},
-
-  {name:"Pollo",price:280,emoji:"🍗",x:9,z:8,color:0xf97316,type:"meat"},
-  {name:"Carne",price:350,emoji:"🥩",x:10,z:8,color:0x991b1b,type:"meat"},
-  {name:"Chuleta",price:320,emoji:"🥩",x:11,z:8,color:0xb91c1c,type:"meat"},
-
-  {name:"Pescado",price:300,emoji:"🐟",x:13,z:1,color:0x60a5fa,type:"fish"},
-  {name:"Camarones",price:450,emoji:"🦐",x:14,z:1,color:0xf97316,type:"fish"},
-
-  {name:"Leche",price:95,emoji:"🥛",x:-12,z:1,color:0xffffff,type:"bottle"},
-  {name:"Queso",price:160,emoji:"🧀",x:-11,z:1,color:0xfacc15,type:"box"},
-  {name:"Yogurt",price:70,emoji:"🍶",x:-10,z:1,color:0xf8fafc,type:"bottle"},
-
-  {name:"Arroz",price:180,emoji:"🍚",x:-5,z:1,color:0xf8fafc,type:"box"},
-  {name:"Aceite",price:240,emoji:"🛢️",x:-4,z:1,color:0xfbbf24,type:"bottle"},
-  {name:"Habichuelas",price:120,emoji:"🫘",x:-3,z:1,color:0x7c2d12,type:"box"},
-
-  {name:"Detergente",price:230,emoji:"🧴",x:2,z:1,color:0x60a5fa,type:"bottle"},
-  {name:"Papel",price:140,emoji:"🧻",x:3,z:1,color:0xffffff,type:"box"},
-  {name:"Jabón",price:75,emoji:"🧼",x:4,z:1,color:0x5eead4,type:"box"},
-
-  {name:"Jamón",price:210,emoji:"🥓",x:-6,z:-8,color:0xfca5a5,type:"meat"},
-  {name:"Queso Gouda",price:260,emoji:"🧀",x:-5,z:-8,color:0xfacc15,type:"box"},
-  {name:"Queso Cheddar",price:240,emoji:"🧀",x:-4,z:-8,color:0xf59e0b,type:"box"},
-
-  {name:"Café listo",price:120,emoji:"☕",x:7,z:-8,color:0x78350f,type:"cup"},
-  {name:"Sandwich",price:180,emoji:"🥪",x:8,z:-8,color:0xfbbf24,type:"box"},
-  {name:"Croissant",price:95,emoji:"🥐",x:9,z:-8,color:0xd97706,type:"box"}
+const DATA=[
+  ["Manzana",35,"🍎",-13,9,0xef4444],["Banana",25,"🍌",-12,9,0xfacc15],["Uvas",120,"🍇",-11,9,0x7c3aed],
+  ["Agua",30,"💧",-6,9,0x38bdf8],["Jugo",75,"🧃",-5,9,0xfb923c],["Refresco",95,"🥤",-4,9,0xef4444],
+  ["Pan",60,"🍞",1,9,0xd97706],["Bizcocho",250,"🍰",2,9,0xf9a8d4],["Dona",80,"🍩",3,9,0xb45309],
+  ["Pollo",280,"🍗",8,9,0xf97316],["Carne",350,"🥩",9,9,0x991b1b],["Chuleta",320,"🥩",10,9,0xb91c1c],
+  ["Pescado",300,"🐟",14,3,0x60a5fa],["Camarones",450,"🦐",15,3,0xf97316],
+  ["Leche",95,"🥛",-13,2,0xffffff],["Queso",160,"🧀",-12,2,0xfacc15],["Yogurt",70,"🍶",-11,2,0xf8fafc],
+  ["Arroz",180,"🍚",-6,2,0xf8fafc],["Aceite",240,"🛢️",-5,2,0xfbbf24],["Habichuelas",120,"🫘",-4,2,0x7c2d12],
+  ["Detergente",230,"🧴",1,2,0x60a5fa],["Papel",140,"🧻",2,2,0xffffff],["Jabón",75,"🧼",3,2,0x5eead4],
+  ["Jamón",210,"🥓",-6,-8,0xfca5a5],["Queso Gouda",260,"🧀",-5,-8,0xfacc15],["Queso Cheddar",240,"🧀",-4,-8,0xf59e0b],
+  ["Café listo",120,"☕",7,-8,0x78350f],["Sandwich",180,"🥪",8,-8,0xfbbf24],["Croissant",95,"🥐",9,-8,0xd97706]
 ];
 
 function startGame(){
-  if(!window.THREE){
-    alert("Three.js no cargó. Necesitas internet o abrir desde GitHub Pages.");
-    return;
+  try{
+    if(!window.THREE){
+      alert("Three.js no cargó. Abre con internet o desde GitHub Pages.");
+      return;
+    }
+    document.getElementById("startScreen").style.display="none";
+    gameStarted=true;
+    init();
+    animate();
+  }catch(err){
+    alert("Error cargando 3D: "+err.message);
+    console.error(err);
   }
-  document.getElementById("startScreen").style.display="none";
-  gameStarted=true;
-  init3D();
-  animate();
 }
 
-function init3D(){
+function init(){
   scene=new THREE.Scene();
-  scene.background=new THREE.Color(0x162033);
-  scene.fog=new THREE.Fog(0x162033,32,85);
+  scene.background=new THREE.Color(0x172033);
 
-  camera=new THREE.PerspectiveCamera(75,window.innerWidth/window.innerHeight,0.1,1000);
+  camera=new THREE.PerspectiveCamera(72,window.innerWidth/window.innerHeight,0.1,1000);
 
-  renderer=new THREE.WebGLRenderer({antialias:true});
+  renderer=new THREE.WebGLRenderer({antialias:false});
   renderer.setSize(window.innerWidth,window.innerHeight);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1,2));
-  renderer.shadowMap.enabled=true;
-  renderer.setClearColor(0x162033,1);
+  renderer.setPixelRatio(1);
   document.body.appendChild(renderer.domElement);
 
-  const ambient=new THREE.AmbientLight(0xffffff,0.85);
-  scene.add(ambient);
+  scene.add(new THREE.AmbientLight(0xffffff,0.95));
+  const light=new THREE.DirectionalLight(0xffffff,1);
+  light.position.set(8,18,12);
+  scene.add(light);
 
-  const sun=new THREE.DirectionalLight(0xffffff,1.25);
-  sun.position.set(10,22,18);
-  sun.castShadow=true;
-  sun.shadow.mapSize.width=2048;
-  sun.shadow.mapSize.height=2048;
-  scene.add(sun);
+  makeFloor();
+  makeWalls();
 
-  const floor=new THREE.Mesh(
-    new THREE.PlaneGeometry(42,56),
-    new THREE.MeshStandardMaterial({color:0xd9d4c8,roughness:.65})
-  );
-  floor.rotation.x=-Math.PI/2;
-  floor.receiveShadow=true;
-  scene.add(floor);
-
-  const grid=new THREE.GridHelper(56,56,0xffffff,0xb8b3a8);
-  grid.position.y=.02;
-  scene.add(grid);
-
-  makeWall(0,-27,42,.55,3.5);
-  makeWall(0,27,42,.55,3.5);
-  makeWall(-21,0,.55,56,3.5);
-  makeWall(21,0,.55,56,3.5);
-
-  makeSign("🚪 ENTRADA",0,25.5,0x111827);
+  sign("ENTRADA",0,26,0x0f172a);
   makeCheckout(15,20);
 
-  makeShelf(-11,9,"FRUTAS FRESCAS");
-  makeShelf(-4,9,"BEBIDAS");
-  makeShelf(3,9,"PANADERÍA");
-  makeBakeryArea(3,13);
+  shelf(-12,10,"FRUTAS");
+  shelf(-5,10,"BEBIDAS");
+  shelf(2,10,"PANADERÍA");
+  areaBox(2,14,"HORNO PANADERÍA",0x92400e);
 
-  makeShelf(10,9,"CARNICERÍA");
-  makeButcherArea(10,13);
+  shelf(9,10,"CARNICERÍA");
+  areaBox(9,14,"ÁREA CARNICERÍA",0x7f1d1d);
 
-  makeFishArea(14,2);
-  makeShelf(-11,2,"LÁCTEOS");
-  makeShelf(-4,2,"BÁSICOS");
-  makeShelf(3,2,"LIMPIEZA");
+  areaBox(14,4,"PESCADERÍA",0x075985);
+  shelf(-12,3,"LÁCTEOS");
+  shelf(-5,3,"BÁSICOS");
+  shelf(2,3,"LIMPIEZA");
 
-  makeFridge(-5,-8,"REFRIGERADOR: JAMÓN Y QUESOS");
-  makeCafeArea(8,-8);
-  makeCustomerService(-14,-11);
-  makeEmployeeDoors(16,-10);
+  fridge(-5,-8,"REFRIGERADOR JAMÓN Y QUESOS");
+  areaBox(8,-8,"CAFETERÍA",0x78350f);
+  areaBox(-14,-11,"SERVICIO AL CLIENTE",0x0f766e);
+  areaBox(16,-11,"ACCESO PRIVADO EMPLEADOS",0x334155);
 
-  productData.forEach(makeProduct);
-  makeAvatar();
+  DATA.forEach(d=>product(d[0],d[1],d[2],d[3],d[4],d[5]));
+  avatar();
   updateCamera();
-
-  document.getElementById("hint").textContent="WASD/Flechas para moverte · Q/E para mirar · Enter para interactuar";
+  hint("WASD/Flechas para moverte · Q/E para girar · Enter para interactuar");
 }
 
-function makeWall(x,z,w,d,h){
-  const mesh=new THREE.Mesh(
+function makeFloor(){
+  const floor=new THREE.Mesh(
+    new THREE.PlaneGeometry(44,58),
+    new THREE.MeshLambertMaterial({color:0xd9d4c8})
+  );
+  floor.rotation.x=-Math.PI/2;
+  scene.add(floor);
+
+  const grid=new THREE.GridHelper(58,58,0xffffff,0x9ca3af);
+  grid.position.y=.02;
+  scene.add(grid);
+}
+
+function makeWalls(){
+  box(0,-28,44,.5,3.4,0x111827,1.7);
+  box(0,28,44,.5,3.4,0x111827,1.7);
+  box(-22,0,.5,58,3.4,0x111827,1.7);
+  box(22,0,.5,58,3.4,0x111827,1.7);
+}
+
+function box(x,z,w,d,h,color,y){
+  const m=new THREE.Mesh(
     new THREE.BoxGeometry(w,h,d),
-    new THREE.MeshStandardMaterial({color:0x111827,roughness:.7})
+    new THREE.MeshLambertMaterial({color})
   );
-  mesh.position.set(x,h/2,z);
-  mesh.castShadow=true;
-  mesh.receiveShadow=true;
-  scene.add(mesh);
+  m.position.set(x,y,z);
+  scene.add(m);
+  return m;
 }
 
-function makeShelf(x,z,label){
-  const base=new THREE.Mesh(
-    new THREE.BoxGeometry(6,1.55,1.35),
-    new THREE.MeshStandardMaterial({color:0x7c3f12,roughness:.55})
-  );
-  base.position.set(x,.78,z);
-  base.castShadow=true;
-  base.receiveShadow=true;
-  scene.add(base);
-
-  const top=new THREE.Mesh(
-    new THREE.BoxGeometry(6.3,.2,1.55),
-    new THREE.MeshStandardMaterial({color:0x4a2508})
-  );
-  top.position.set(x,1.6,z);
-  top.castShadow=true;
-  scene.add(top);
-
-  const shelfLine=new THREE.Mesh(
-    new THREE.BoxGeometry(6.1,.12,.12),
-    new THREE.MeshStandardMaterial({color:0xfbbf24})
-  );
-  shelfLine.position.set(x,1.15,z+.72);
-  scene.add(shelfLine);
-
-  const text=createTextSprite(label);
-  text.position.set(x,2.35,z+.2);
-  scene.add(text);
+function shelf(x,z,label){
+  box(x,z,6,1.4,1.4,0x7c3f12,.7);
+  box(x, z+.72,6.2,.12,.16,0xfbbf24,1.35);
+  sign(label,x,z+.25,0x111827,2.4);
 }
 
-function makeFridge(x,z,label){
-  const body=new THREE.Mesh(
-    new THREE.BoxGeometry(7,2.7,1.7),
-    new THREE.MeshStandardMaterial({color:0x7dd3fc,roughness:.2,metalness:.1})
-  );
-  body.position.set(x,1.35,z);
-  body.castShadow=true;
-  body.receiveShadow=true;
-  scene.add(body);
+function areaBox(x,z,label,color){
+  box(x,z,5.2,2.1,1.25,color,.62);
+  sign(label,x,z+1.35,color,2.2);
+}
 
-  const glass=new THREE.Mesh(
-    new THREE.BoxGeometry(6.4,2,.09),
-    new THREE.MeshStandardMaterial({color:0xdff8ff,transparent:true,opacity:.35,roughness:.05})
-  );
-  glass.position.set(x,1.35,z+.88);
-  scene.add(glass);
-
-  const innerLight=new THREE.PointLight(0x67e8f9,.8,8);
-  innerLight.position.set(x,2,z+.6);
-  scene.add(innerLight);
-
+function fridge(x,z,label){
+  box(x,z,7,1.8,2.7,0x38bdf8,1.35);
+  box(x,z+.93,6.4,.08,2,0xdff8ff,1.35);
   for(let i=0;i<6;i++){
-    const food=new THREE.Mesh(
-      new THREE.BoxGeometry(.65,.25,.45),
-      new THREE.MeshStandardMaterial({color:i%2?0xfacc15:0xfca5a5})
-    );
-    food.position.set(x-2.4+i*.95,1.25,z+.72);
-    food.castShadow=true;
-    scene.add(food);
+    box(x-2.5+i, z+.98, .55, .35, .25, i%2?0xfacc15:0xfca5a5, 1.35);
   }
-
-  const text=createTextSprite(label);
-  text.position.set(x,3.15,z+.25);
-  scene.add(text);
+  sign(label,x,z+.35,0x075985,3.2);
 }
 
 function makeCheckout(x,z){
-  const counter=new THREE.Mesh(
-    new THREE.BoxGeometry(5,1.4,2.2),
-    new THREE.MeshStandardMaterial({color:0x020617,roughness:.45})
-  );
-  counter.position.set(x,.7,z);
-  counter.castShadow=true;
-  counter.receiveShadow=true;
-  counter.userData={type:"checkout"};
-  scene.add(counter);
-
-  const screen=new THREE.Mesh(
-    new THREE.BoxGeometry(1.2,1,.12),
-    new THREE.MeshStandardMaterial({color:0x67e8f9,emissive:0x0e7490,emissiveIntensity:.45})
-  );
-  screen.position.set(x,2,z-.35);
-  screen.castShadow=true;
-  scene.add(screen);
-
-  const belt=new THREE.Mesh(
-    new THREE.BoxGeometry(4.2,.15,1.1),
-    new THREE.MeshStandardMaterial({color:0x334155,roughness:.4})
-  );
-  belt.position.set(x,.95,z+.25);
-  scene.add(belt);
-
-  makeSign("CAJA - PAGAR",x,z+1.8,0x111827);
-  window.checkoutObject=counter;
+  checkoutBox=box(x,z,5,2.2,1.4,0x020617,.7);
+  box(x,z+.25,4.2,1.1,.15,0x334155,1);
+  box(x,z-.35,1.2,.12,1,0x67e8f9,2);
+  sign("CAJA - PAGAR",x,z+1.8,0x111827,2.8);
 }
 
-function makeBakeryArea(x,z){
-  const oven=new THREE.Mesh(
-    new THREE.BoxGeometry(4,2.2,1.4),
-    new THREE.MeshStandardMaterial({color:0x92400e,roughness:.4})
-  );
-  oven.position.set(x,1.1,z);
-  oven.castShadow=true;
-  scene.add(oven);
-  makeSign("HORNO / PANADERÍA",x,z+1.2,0x92400e);
-}
-
-function makeButcherArea(x,z){
-  const table=new THREE.Mesh(
-    new THREE.BoxGeometry(5,1.1,1.8),
-    new THREE.MeshStandardMaterial({color:0xb91c1c,roughness:.45})
-  );
-  table.position.set(x,.55,z);
-  table.castShadow=true;
-  scene.add(table);
-  makeSign("ÁREA DE CARNICERÍA",x,z+1.4,0x7f1d1d);
-}
-
-function makeFishArea(x,z){
-  const ice=new THREE.Mesh(
-    new THREE.BoxGeometry(5,1.2,2),
-    new THREE.MeshStandardMaterial({color:0xbae6fd,roughness:.2})
-  );
-  ice.position.set(x,.6,z);
-  ice.castShadow=true;
-  scene.add(ice);
-
-  for(let i=0;i<4;i++){
-    const fish=new THREE.Mesh(
-      new THREE.ConeGeometry(.18,.75,12),
-      new THREE.MeshStandardMaterial({color:0x60a5fa})
-    );
-    fish.rotation.z=Math.PI/2;
-    fish.position.set(x-1.6+i*1,.95,z+.25);
-    fish.castShadow=true;
-    scene.add(fish);
-  }
-  makeSign("PESCADERÍA",x,z+1.6,0x075985);
-}
-
-function makeCustomerService(x,z){
-  const desk=new THREE.Mesh(
-    new THREE.BoxGeometry(5,1.35,2),
-    new THREE.MeshStandardMaterial({color:0x0f766e,roughness:.45})
-  );
-  desk.position.set(x,.68,z);
-  desk.castShadow=true;
-  scene.add(desk);
-  makeSign("SERVICIO AL CLIENTE",x,z+1.6,0x0f766e);
-}
-
-function makeCafeArea(x,z){
-  const counter=new THREE.Mesh(
-    new THREE.BoxGeometry(5,1.25,2),
-    new THREE.MeshStandardMaterial({color:0x78350f,roughness:.45})
-  );
-  counter.position.set(x,.63,z);
-  counter.castShadow=true;
-  scene.add(counter);
-
-  const cup=new THREE.Mesh(
-    new THREE.CylinderGeometry(.25,.2,.4,16),
-    new THREE.MeshStandardMaterial({color:0xffffff})
-  );
-  cup.position.set(x-1.2,1.5,z+.5);
-  cup.castShadow=true;
-  scene.add(cup);
-
-  makeSign("CAFETERÍA",x,z+1.6,0x78350f);
-}
-
-function makeEmployeeDoors(x,z){
-  const wallMat=new THREE.MeshStandardMaterial({color:0x1f2937,roughness:.6});
-  const doorMat=new THREE.MeshStandardMaterial({color:0x334155,roughness:.4});
-
-  const panel=new THREE.Mesh(new THREE.BoxGeometry(6,3,.3),wallMat);
-  panel.position.set(x,1.5,z);
-  panel.castShadow=true;
-  scene.add(panel);
-
-  const door1=new THREE.Mesh(new THREE.BoxGeometry(1.5,2.4,.12),doorMat);
-  door1.position.set(x-1,1.2,z+.18);
-  scene.add(door1);
-
-  const door2=new THREE.Mesh(new THREE.BoxGeometry(1.5,2.4,.12),doorMat);
-  door2.position.set(x+1,1.2,z+.18);
-  scene.add(door2);
-
-  makeSign("ACCESO PRIVADO - EMPLEADOS",x,z+.45,0x334155);
-}
-
-function makeProduct(p){
-  let geo;
-  if(p.type==="sphere") geo=new THREE.SphereGeometry(.34,20,20);
-  else if(p.type==="bottle") geo=new THREE.CylinderGeometry(.22,.25,.75,16);
-  else if(p.type==="torus") geo=new THREE.TorusGeometry(.28,.12,12,24);
-  else if(p.type==="fish") geo=new THREE.ConeGeometry(.22,.85,14);
-  else if(p.type==="meat") geo=new THREE.BoxGeometry(.75,.28,.55);
-  else if(p.type==="cup") geo=new THREE.CylinderGeometry(.26,.2,.45,16);
-  else geo=new THREE.BoxGeometry(.72,.55,.55);
-
-  const mesh=new THREE.Mesh(
-    geo,
-    new THREE.MeshStandardMaterial({color:p.color,roughness:.38})
-  );
-
-  mesh.position.set(p.x,1.95,p.z+.35);
-  if(p.type==="fish") mesh.rotation.z=Math.PI/2;
-  mesh.castShadow=true;
-  mesh.receiveShadow=true;
-  mesh.userData={...p,type:"product"};
-  scene.add(mesh);
-
-  const label=createTextSprite(p.emoji+" "+p.name);
-  label.position.set(p.x,2.75,p.z+.65);
-  scene.add(label);
-
+function product(name,price,emoji,x,z,color){
+  const mesh=box(x,z+.35,.65,.55,.55,color,1.85);
+  mesh.userData={name,price,emoji};
   products.push(mesh);
+
+  // Producto visible encima como cartel pequeño
+  sign(emoji+" "+name,x,z+.95,0x020617,2.55,2.6,.65);
 }
 
-function makeAvatar(){
-  const group=new THREE.Group();
-  scene.add(group);
+function avatar(){
+  const g=new THREE.Group();
+  scene.add(g);
 
-  const skinMat=new THREE.MeshStandardMaterial({color:0xf1c27d,roughness:.45});
-  const shirtMat=new THREE.MeshStandardMaterial({color:0x111827,roughness:.5});
-  const pantsMat=new THREE.MeshStandardMaterial({color:0x2563eb,roughness:.5});
-  const hairMat=new THREE.MeshStandardMaterial({color:0x111111,roughness:.7});
-  const shoeMat=new THREE.MeshStandardMaterial({color:0x030712,roughness:.6});
-  const cartMat=new THREE.MeshStandardMaterial({color:0xe2e8f0,metalness:.35,roughness:.22});
-  const cartDarkMat=new THREE.MeshStandardMaterial({color:0x475569,metalness:.25,roughness:.35});
+  const skin=0xf1c27d, hair=0x111111, shirt=0x111827, pants=0x2563eb, metal=0xe2e8f0;
 
-  const body=new THREE.Mesh(new THREE.CylinderGeometry(.34,.43,.95,18),shirtMat);
-  body.position.y=.95; body.castShadow=true; group.add(body);
+  const body=new THREE.Mesh(new THREE.CylinderGeometry(.34,.43,.95,14),new THREE.MeshLambertMaterial({color:shirt}));
+  body.position.y=.95; g.add(body);
 
-  const head=new THREE.Mesh(new THREE.SphereGeometry(.28,24,24),skinMat);
-  head.position.y=1.62; head.castShadow=true; group.add(head);
+  const head=new THREE.Mesh(new THREE.SphereGeometry(.28,18,18),new THREE.MeshLambertMaterial({color:skin}));
+  head.position.y=1.62; g.add(head);
 
-  const hair=new THREE.Mesh(new THREE.SphereGeometry(.30,24,24),hairMat);
-  hair.position.y=1.78; hair.scale.set(1.05,.5,1.05); hair.castShadow=true; group.add(hair);
+  const hairMesh=new THREE.Mesh(new THREE.SphereGeometry(.3,18,18),new THREE.MeshLambertMaterial({color:hair}));
+  hairMesh.position.y=1.78; hairMesh.scale.set(1.05,.5,1.05); g.add(hairMesh);
 
-  const bang=new THREE.Mesh(new THREE.BoxGeometry(.44,.12,.17),hairMat);
-  bang.position.set(0,1.67,.24); bang.rotation.x=-.2; bang.castShadow=true; group.add(bang);
+  const bang=new THREE.Mesh(new THREE.BoxGeometry(.45,.12,.17),new THREE.MeshLambertMaterial({color:hair}));
+  bang.position.set(0,1.67,.25); g.add(bang);
 
-  const leftArm=new THREE.Mesh(new THREE.BoxGeometry(.16,.62,.16),skinMat);
-  leftArm.position.set(-.48,.95,.12); leftArm.castShadow=true; group.add(leftArm);
+  const leftArm=new THREE.Mesh(new THREE.BoxGeometry(.16,.62,.16),new THREE.MeshLambertMaterial({color:skin}));
+  leftArm.position.set(-.48,.95,.12); g.add(leftArm);
 
-  const rightArm=new THREE.Mesh(new THREE.BoxGeometry(.16,.62,.16),skinMat);
-  rightArm.position.set(.48,.95,.12); rightArm.castShadow=true; group.add(rightArm);
+  const rightArm=leftArm.clone(); rightArm.position.x=.48; g.add(rightArm);
 
-  const leftLeg=new THREE.Mesh(new THREE.BoxGeometry(.18,.6,.18),pantsMat);
-  leftLeg.position.set(-.16,.33,0); leftLeg.castShadow=true; group.add(leftLeg);
+  const leftLeg=new THREE.Mesh(new THREE.BoxGeometry(.18,.6,.18),new THREE.MeshLambertMaterial({color:pants}));
+  leftLeg.position.set(-.16,.33,0); g.add(leftLeg);
 
-  const rightLeg=new THREE.Mesh(new THREE.BoxGeometry(.18,.6,.18),pantsMat);
-  rightLeg.position.set(.16,.33,0); rightLeg.castShadow=true; group.add(rightLeg);
+  const rightLeg=leftLeg.clone(); rightLeg.position.x=.16; g.add(rightLeg);
 
-  const leftShoe=new THREE.Mesh(new THREE.BoxGeometry(.25,.12,.38),shoeMat);
-  leftShoe.position.set(-.16,.04,.07); leftShoe.castShadow=true; group.add(leftShoe);
-
-  const rightShoe=new THREE.Mesh(new THREE.BoxGeometry(.25,.12,.38),shoeMat);
-  rightShoe.position.set(.16,.04,.07); rightShoe.castShadow=true; group.add(rightShoe);
-
+  // Carrito delante
   const cartGroup=new THREE.Group();
-  cartGroup.position.set(0,.38,1.35);
+  cartGroup.position.set(0,.42,1.45);
 
-  const basket=new THREE.Mesh(new THREE.BoxGeometry(1.15,.55,.9),cartMat);
-  basket.position.y=.38; basket.castShadow=true; cartGroup.add(basket);
+  const basket=new THREE.Mesh(new THREE.BoxGeometry(1.25,.55,.95),new THREE.MeshLambertMaterial({color:metal}));
+  basket.position.y=.38; cartGroup.add(basket);
 
-  const inner=new THREE.Mesh(new THREE.BoxGeometry(.95,.34,.72),new THREE.MeshStandardMaterial({color:0x0f172a,roughness:.45}));
-  inner.position.set(0,.45,.03); cartGroup.add(inner);
+  const hollow=new THREE.Mesh(new THREE.BoxGeometry(.95,.32,.7),new THREE.MeshLambertMaterial({color:0x0f172a}));
+  hollow.position.set(0,.45,.04); cartGroup.add(hollow);
 
-  const handle=new THREE.Mesh(new THREE.BoxGeometry(1.25,.08,.08),cartDarkMat);
-  handle.position.set(0,.85,-.53); handle.castShadow=true; cartGroup.add(handle);
+  const handle=new THREE.Mesh(new THREE.BoxGeometry(1.35,.08,.08),new THREE.MeshLambertMaterial({color:0x475569}));
+  handle.position.set(0,.85,-.55); cartGroup.add(handle);
 
-  const frontBar=new THREE.Mesh(new THREE.BoxGeometry(1.08,.08,.08),cartDarkMat);
-  frontBar.position.set(0,.70,.53); frontBar.castShadow=true; cartGroup.add(frontBar);
-
-  const wheelGeo=new THREE.CylinderGeometry(.12,.12,.08,16);
-  [[-.45,.04,.36],[.45,.04,.36],[-.45,.04,-.36],[.45,.04,-.36]].forEach(pos=>{
-    const wheel=new THREE.Mesh(wheelGeo,shoeMat);
-    wheel.rotation.z=Math.PI/2;
-    wheel.position.set(pos[0],pos[1],pos[2]);
-    wheel.castShadow=true;
-    cartGroup.add(wheel);
+  [[-.48,.04,.39],[.48,.04,.39],[-.48,.04,-.39],[.48,.04,-.39]].forEach(p=>{
+    const wh=new THREE.Mesh(new THREE.CylinderGeometry(.12,.12,.08,12),new THREE.MeshLambertMaterial({color:0x030712}));
+    wh.rotation.z=Math.PI/2; wh.position.set(p[0],p[1],p[2]); cartGroup.add(wh);
   });
 
-  group.add(cartGroup);
-
-  player.avatar=group;
-  player.avatarParts={leftLeg,rightLeg,leftArm,rightArm,leftShoe,rightShoe,cartGroup};
+  g.add(cartGroup);
+  player.avatar=g;
+  player.parts={leftLeg,rightLeg,leftArm,rightArm,cartGroup};
 }
 
-function createTextSprite(message){
+function sign(text,x,z,color,y=2.8,w=4,h=.9){
   const canvas=document.createElement("canvas");
-  canvas.width=512;
-  canvas.height=128;
+  canvas.width=512; canvas.height=128;
   const ctx=canvas.getContext("2d");
-  ctx.fillStyle="rgba(0,0,0,.74)";
-  ctx.fillRect(16,24,480,80);
-  ctx.fillStyle="white";
+  ctx.fillStyle="rgba(0,0,0,.75)";
+  ctx.fillRect(10,24,492,80);
+  ctx.fillStyle="#fff";
   ctx.font="bold 30px Arial";
   ctx.textAlign="center";
   ctx.textBaseline="middle";
-  ctx.fillText(message,256,64);
+  ctx.fillText(text,256,64);
   const texture=new THREE.CanvasTexture(canvas);
-  const material=new THREE.SpriteMaterial({map:texture,transparent:true});
-  const sprite=new THREE.Sprite(material);
-  sprite.scale.set(4.1,1,1);
-  return sprite;
+  const sprite=new THREE.Sprite(new THREE.SpriteMaterial({map:texture,transparent:true}));
+  sprite.position.set(x,y,z);
+  sprite.scale.set(w,h,1);
+  scene.add(sprite);
 }
 
 function updateCamera(){
-  const eyeHeight=1.9;
-  const behind=5.1;
-  const fx=Math.sin(player.rot);
-  const fz=Math.cos(player.rot);
-
-  camera.position.set(player.x-fx*behind,eyeHeight+1.45,player.z-fz*behind);
-  camera.lookAt(player.x+fx*5,eyeHeight,player.z+fz*5);
+  const fx=Math.sin(player.rot), fz=Math.cos(player.rot);
+  camera.position.set(player.x-fx*5.3,3.45,player.z-fz*5.3);
+  camera.lookAt(player.x+fx*5,1.85,player.z+fz*5);
 
   if(player.avatar){
     player.avatar.position.set(player.x,0,player.z);
@@ -580,152 +340,108 @@ function updateCamera(){
 }
 
 function movePlayer(){
-  const speed=.13;
-  const turn=.047;
-
+  const speed=.13, turn=.045;
   if(keys.turnLeft)player.rot+=turn;
   if(keys.turnRight)player.rot-=turn;
 
   let dx=0,dz=0;
-  const fx=Math.sin(player.rot);
-  const fz=Math.cos(player.rot);
-  const rx=Math.sin(player.rot-Math.PI/2);
-  const rz=Math.cos(player.rot-Math.PI/2);
+  const fx=Math.sin(player.rot), fz=Math.cos(player.rot);
+  const rx=Math.sin(player.rot-Math.PI/2), rz=Math.cos(player.rot-Math.PI/2);
 
   if(keys.forward){dx+=fx*speed;dz+=fz*speed}
   if(keys.backward){dx-=fx*speed;dz-=fz*speed}
   if(keys.left){dx+=rx*speed;dz+=rz*speed}
   if(keys.right){dx-=rx*speed;dz-=rz*speed}
 
-  const moving=Math.abs(dx)>0.001 || Math.abs(dz)>0.001;
+  const moving=Math.abs(dx)+Math.abs(dz)>0.001;
+  player.x=Math.max(-20,Math.min(20,player.x+dx));
+  player.z=Math.max(-26,Math.min(26,player.z+dz));
 
-  player.x+=dx;
-  player.z+=dz;
-
-  player.x=Math.max(-19.5,Math.min(19.5,player.x));
-  player.z=Math.max(-25.5,Math.min(25.5,player.z));
-
-  animateAvatarWalk(moving);
+  walk(moving);
   updateCamera();
-  detectNearby();
+  detect();
 }
 
-function animateAvatarWalk(moving){
-  if(!player.avatarParts)return;
-  const p=player.avatarParts;
-
+function walk(moving){
+  if(!player.parts)return;
+  const p=player.parts;
   if(moving){
     const t=Date.now()*0.012;
-    p.leftLeg.rotation.x=Math.sin(t)*0.68;
-    p.rightLeg.rotation.x=-Math.sin(t)*0.68;
-    p.leftArm.rotation.x=-Math.sin(t)*0.48;
-    p.rightArm.rotation.x=Math.sin(t)*0.48;
-    p.leftShoe.rotation.x=Math.sin(t)*0.45;
-    p.rightShoe.rotation.x=-Math.sin(t)*0.45;
-    player.avatar.position.y=Math.abs(Math.sin(t))*0.04;
-    p.cartGroup.position.y=.38+Math.abs(Math.sin(t))*0.025;
-    p.cartGroup.rotation.z=Math.sin(t)*0.018;
+    p.leftLeg.rotation.x=Math.sin(t)*.7;
+    p.rightLeg.rotation.x=-Math.sin(t)*.7;
+    p.leftArm.rotation.x=-Math.sin(t)*.45;
+    p.rightArm.rotation.x=Math.sin(t)*.45;
+    player.avatar.position.y=Math.abs(Math.sin(t))*.04;
+    p.cartGroup.rotation.z=Math.sin(t)*.02;
   }else{
-    p.leftLeg.rotation.x*=0.72;
-    p.rightLeg.rotation.x*=0.72;
-    p.leftArm.rotation.x*=0.72;
-    p.rightArm.rotation.x*=0.72;
-    p.leftShoe.rotation.x*=0.72;
-    p.rightShoe.rotation.x*=0.72;
-    player.avatar.position.y*=0.72;
-    p.cartGroup.rotation.z*=0.72;
-    p.cartGroup.position.y=.38;
+    p.leftLeg.rotation.x*=.7; p.rightLeg.rotation.x*=.7;
+    p.leftArm.rotation.x*=.7; p.rightArm.rotation.x*=.7;
+    p.cartGroup.rotation.z*=.7;
   }
 }
 
-function detectNearby(){
-  let nearest=null;
-  let minDist=2.0;
-
-  products.forEach(obj=>{
-    const dist=Math.hypot(obj.position.x-player.x,obj.position.z-player.z);
-    if(dist<minDist){
-      minDist=dist;
-      nearest=obj;
-    }
+function detect(){
+  let nearest=null, dist=2.1;
+  products.forEach(p=>{
+    const d=Math.hypot(p.position.x-player.x,p.position.z-player.z);
+    if(d<dist){dist=d;nearest=p}
   });
 
-  const checkoutDist=window.checkoutObject
-    ? Math.hypot(window.checkoutObject.position.x-player.x,window.checkoutObject.position.z-player.z)
-    : 999;
-
-  if(checkoutDist<3.8){
-    interactionTarget={type:"checkout"};
-    document.getElementById("hint").textContent="Estás en CAJA · Presiona Enter o 🛒 para pagar";
+  const cd=checkoutBox?Math.hypot(checkoutBox.position.x-player.x,checkoutBox.position.z-player.z):999;
+  if(cd<4){
+    currentTarget={type:"checkout"};
+    hint("Estás en CAJA · Enter o 🛒 para pagar");
     return;
   }
 
   if(nearest){
-    interactionTarget={type:"product",data:nearest.userData};
-    document.getElementById("hint").textContent=
-      "Producto cerca: "+nearest.userData.emoji+" "+nearest.userData.name+" RD$"+nearest.userData.price+" · Enter o 🛒";
+    currentTarget={type:"product",data:nearest.userData};
+    hint("Producto cerca: "+nearest.userData.emoji+" "+nearest.userData.name+" RD$"+nearest.userData.price+" · Enter");
   }else{
-    interactionTarget=null;
-    document.getElementById("hint").textContent=
-      "WASD/Flechas para moverte · Q/E para mirar · Enter para interactuar";
+    currentTarget=null;
+    hint("WASD/Flechas para moverte · Q/E para girar · Enter para interactuar");
   }
 }
 
 function tryInteract(){
-  if(!interactionTarget)return;
+  if(!currentTarget)return;
 
-  if(interactionTarget.type==="checkout"){
-    openCheckout();
+  if(currentTarget.type==="checkout"){
+    document.getElementById("modalTitle").textContent="🧾 Caja de pago";
+    document.getElementById("modalText").innerHTML=cart.length
+      ? cart.map((p,i)=>`${i+1}. ${p.emoji} ${p.name} - RD$${p.price}`).join("<br>")+`<br><br><b>Total: RD$${total}</b><br><br>Pedido simulado confirmado.`
+      : "Tu carrito está vacío.";
+    document.getElementById("mainBtn").textContent="Finalizar";
+    document.getElementById("modal").style.display="flex";
     return;
   }
 
-  const p=interactionTarget.data;
+  const p=currentTarget.data;
   document.getElementById("modalTitle").textContent=p.emoji+" "+p.name;
-  document.getElementById("modalPrice").textContent="Precio: RD$"+p.price;
-  document.getElementById("primaryBtn").textContent="Agregar";
+  document.getElementById("modalText").textContent="Precio: RD$"+p.price;
+  document.getElementById("mainBtn").textContent="Agregar";
   document.getElementById("modal").style.display="flex";
 }
 
-function primaryAction(){
-  if(interactionTarget && interactionTarget.type==="checkout"){
-    closeModal();
-    return;
-  }
-  addCurrentProduct();
-}
-
-function addCurrentProduct(){
-  if(!interactionTarget || interactionTarget.type!=="product")return;
-  const p=interactionTarget.data;
+function mainAction(){
+  if(!currentTarget){closeModal();return}
+  if(currentTarget.type==="checkout"){closeModal();return}
+  const p=currentTarget.data;
   cart.push({...p});
   total+=p.price;
   renderCart();
   closeModal();
 }
 
-function openCheckout(){
-  document.getElementById("modalTitle").textContent="🧾 Caja de pago";
-  if(cart.length===0){
-    document.getElementById("modalPrice").innerHTML="Tu carrito está vacío.";
-  }else{
-    document.getElementById("modalPrice").innerHTML=
-      cart.map((p,i)=>`${i+1}. ${p.emoji} ${p.name} - RD$${p.price}`).join("<br>")+
-      `<br><br><strong>Total: RD$${total}</strong><br><br>Pedido simulado confirmado.`;
-  }
-  document.getElementById("primaryBtn").textContent="Finalizar";
-  document.getElementById("modal").style.display="flex";
-}
-
 function renderCart(){
   document.getElementById("total").textContent=total;
-  const list=document.getElementById("cartList");
-  if(cart.length===0){list.innerHTML="Vacío";return}
-  list.innerHTML=cart.map((p,i)=>`${i+1}. ${p.emoji} ${p.name} - RD$${p.price}`).join("<br>");
+  document.getElementById("cartList").innerHTML=cart.length
+    ? cart.map((p,i)=>`${i+1}. ${p.emoji} ${p.name} - RD$${p.price}`).join("<br>")
+    : "Vacío";
 }
 
-function closeModal(){
-  document.getElementById("modal").style.display="none";
-}
+function closeModal(){document.getElementById("modal").style.display="none"}
+function hint(t){document.getElementById("hint").textContent=t}
 
 function animate(){
   if(!gameStarted)return;
@@ -744,7 +460,6 @@ document.addEventListener("keydown",e=>{
   if(k==="e")keys.turnRight=true;
   if(e.key==="Enter")tryInteract();
 });
-
 document.addEventListener("keyup",e=>{
   const k=e.key.toLowerCase();
   if(k==="w"||e.key==="ArrowUp")keys.forward=false;
@@ -754,10 +469,8 @@ document.addEventListener("keyup",e=>{
   if(k==="q")keys.turnLeft=false;
   if(k==="e")keys.turnRight=false;
 });
-
-function press(action){keys[action]=true}
-function release(action){keys[action]=false}
-
+function press(a){keys[a]=true}
+function release(a){keys[a]=false}
 window.addEventListener("resize",()=>{
   if(!camera||!renderer)return;
   camera.aspect=window.innerWidth/window.innerHeight;
