@@ -1,482 +1,73 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>THE SUPERMARKET 3D Stable</title>
-<style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
-body{overflow:hidden;background:#050505;color:white}
-#startScreen{
-  position:fixed;inset:0;background:radial-gradient(circle,#1e293b,#020617);
-  z-index:50;display:flex;align-items:center;justify-content:center;text-align:center;padding:20px
-}
-.startBox{
-  width:92%;max-width:520px;background:rgba(255,255,255,.08);
-  border:1px solid rgba(255,255,255,.16);border-radius:24px;padding:32px
-}
-.startBox h1{font-size:38px;color:#67e8f9;letter-spacing:3px;margin-bottom:12px}
-.startBox p{color:#cbd5e1;line-height:1.5;margin-bottom:12px}
-.startBox button{
-  padding:14px 36px;border:none;border-radius:999px;background:#67e8f9;
-  color:#020617;font-weight:900;font-size:18px;cursor:pointer;margin-top:10px
-}
-#hud{
-  position:fixed;top:15px;left:15px;z-index:20;background:rgba(0,0,0,.72);
-  border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:14px;width:280px
-}
-#hud h2{color:#67e8f9;font-size:18px;margin-bottom:8px}
-#cartList{font-size:13px;line-height:1.5;max-height:160px;overflow:auto;margin-top:8px;color:#e2e8f0}
-#hint{
-  position:fixed;left:50%;bottom:18px;transform:translateX(-50%);
-  background:rgba(0,0,0,.78);border:1px solid rgba(255,255,255,.14);
-  padding:12px 18px;border-radius:999px;z-index:20;max-width:92%;text-align:center
-}
-#modal{
-  display:none;position:fixed;inset:0;background:rgba(0,0,0,.78);
-  z-index:70;align-items:center;justify-content:center;padding:20px
-}
-.modalBox{
-  background:white;color:#020617;border-radius:22px;padding:25px;
-  width:92%;max-width:420px;text-align:center
-}
-.modalBox h2{margin-bottom:12px}
-.modalBox p{margin-bottom:14px;line-height:1.5}
-.modalBox button{
-  border:none;border-radius:14px;padding:12px 20px;font-weight:900;cursor:pointer;margin:5px
-}
-#mainBtn{background:#020617;color:white}
-.closeBtn{background:#e5e7eb;color:#111827}
-#mobileControls{
-  position:fixed;right:14px;bottom:72px;z-index:25;display:grid;
-  grid-template-columns:repeat(3,52px);gap:8px
-}
-.ctrl{
-  width:52px;height:52px;border-radius:14px;border:1px solid rgba(255,255,255,.15);
-  background:rgba(0,0,0,.72);color:white;font-size:22px
-}
-#lookControls{
-  position:fixed;left:14px;bottom:72px;z-index:25;display:flex;gap:8px
-}
-.look{
-  width:52px;height:52px;border-radius:14px;border:1px solid rgba(255,255,255,.15);
-  background:rgba(0,0,0,.72);color:white;font-size:22px
-}
-@media(min-width:800px){#mobileControls,#lookControls{display:none}}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THE SUPERMARKET 3D (con detección móvil)</title>
+    <!--
+      Esta plantilla incluye una capa de bloqueo para móviles. Si se detecta un dispositivo
+      móvil o una pantalla pequeña, se mostrará un aviso informando que la versión 3D está
+      disponible solo en escritorio. Puede redirigir a una versión 2.5D o simplemente
+      mostrar este aviso.
+    -->
+    <style>
+      /* Estilo básico para el aviso de móviles */
+      #mobileAlert {
+        display: none;
+        position: fixed;
+        left: 0;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        background: #020617;
+        color: #fff;
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 20px;
+        font-size: 1.2rem;
+      }
+    </style>
 </head>
 <body>
 
-<div id="startScreen">
-  <div class="startBox">
-    <h1>THE SUPERMARKET</h1>
-    <p>Versión 3D estable.</p>
-    <p>WASD/Flechas para moverte · Q/E para girar · Enter para interactuar.</p>
-    <button onclick="startGame()">ENTRAR</button>
-  </div>
-</div>
-
-<div id="hud">
-  <h2>🛒 Carrito 3D</h2>
-  <p>Total: RD$<span id="total">0</span></p>
-  <div id="cartList">Vacío</div>
-</div>
-
-<div id="hint">Pulsa ENTRAR para comenzar.</div>
-
-<div id="mobileControls">
-  <div></div><button class="ctrl" ontouchstart="press('forward')" ontouchend="release('forward')">▲</button><div></div>
-  <button class="ctrl" ontouchstart="press('left')" ontouchend="release('left')">◀</button>
-  <button class="ctrl" onclick="tryInteract()">🛒</button>
-  <button class="ctrl" ontouchstart="press('right')" ontouchend="release('right')">▶</button>
-  <div></div><button class="ctrl" ontouchstart="press('backward')" ontouchend="release('backward')">▼</button><div></div>
-</div>
-
-<div id="lookControls">
-  <button class="look" ontouchstart="press('turnLeft')" ontouchend="release('turnLeft')">↺</button>
-  <button class="look" ontouchstart="press('turnRight')" ontouchend="release('turnRight')">↻</button>
-</div>
-
-<div id="modal">
-  <div class="modalBox">
-    <h2 id="modalTitle"></h2>
-    <p id="modalText"></p>
-    <button id="mainBtn" onclick="mainAction()">Agregar</button>
-    <button class="closeBtn" onclick="closeModal()">Cerrar</button>
-  </div>
-</div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script>
-let scene,camera,renderer;
-let player={x:0,z:22,rot:Math.PI};
-let keys={};
-let cart=[];
-let total=0;
-let products=[];
-let currentTarget=null;
-let checkoutBox=null;
-let gameStarted=false;
-
-const DATA=[
-  ["Manzana",35,"🍎",-13,9,0xef4444],["Banana",25,"🍌",-12,9,0xfacc15],["Uvas",120,"🍇",-11,9,0x7c3aed],
-  ["Agua",30,"💧",-6,9,0x38bdf8],["Jugo",75,"🧃",-5,9,0xfb923c],["Refresco",95,"🥤",-4,9,0xef4444],
-  ["Pan",60,"🍞",1,9,0xd97706],["Bizcocho",250,"🍰",2,9,0xf9a8d4],["Dona",80,"🍩",3,9,0xb45309],
-  ["Pollo",280,"🍗",8,9,0xf97316],["Carne",350,"🥩",9,9,0x991b1b],["Chuleta",320,"🥩",10,9,0xb91c1c],
-  ["Pescado",300,"🐟",14,3,0x60a5fa],["Camarones",450,"🦐",15,3,0xf97316],
-  ["Leche",95,"🥛",-13,2,0xffffff],["Queso",160,"🧀",-12,2,0xfacc15],["Yogurt",70,"🍶",-11,2,0xf8fafc],
-  ["Arroz",180,"🍚",-6,2,0xf8fafc],["Aceite",240,"🛢️",-5,2,0xfbbf24],["Habichuelas",120,"🫘",-4,2,0x7c2d12],
-  ["Detergente",230,"🧴",1,2,0x60a5fa],["Papel",140,"🧻",2,2,0xffffff],["Jabón",75,"🧼",3,2,0x5eead4],
-  ["Jamón",210,"🥓",-6,-8,0xfca5a5],["Queso Gouda",260,"🧀",-5,-8,0xfacc15],["Queso Cheddar",240,"🧀",-4,-8,0xf59e0b],
-  ["Café listo",120,"☕",7,-8,0x78350f],["Sandwich",180,"🥪",8,-8,0xfbbf24],["Croissant",95,"🥐",9,-8,0xd97706]
-];
-
-function startGame(){
-  try{
-    if(!window.THREE){
-      alert("Three.js no cargó. Abre con internet o desde GitHub Pages.");
-      return;
-    }
-    document.getElementById("startScreen").style.display="none";
-    gameStarted=true;
-    init();
-    animate();
-  }catch(err){
-    alert("Error cargando 3D: "+err.message);
-    console.error(err);
-  }
-}
-
-function init(){
-  scene=new THREE.Scene();
-  scene.background=new THREE.Color(0x172033);
-
-  camera=new THREE.PerspectiveCamera(72,window.innerWidth/window.innerHeight,0.1,1000);
-
-  renderer=new THREE.WebGLRenderer({antialias:false});
-  renderer.setSize(window.innerWidth,window.innerHeight);
-  renderer.setPixelRatio(1);
-  document.body.appendChild(renderer.domElement);
-
-  scene.add(new THREE.AmbientLight(0xffffff,0.95));
-  const light=new THREE.DirectionalLight(0xffffff,1);
-  light.position.set(8,18,12);
-  scene.add(light);
-
-  makeFloor();
-  makeWalls();
-
-  sign("ENTRADA",0,26,0x0f172a);
-  makeCheckout(15,20);
-
-  shelf(-12,10,"FRUTAS");
-  shelf(-5,10,"BEBIDAS");
-  shelf(2,10,"PANADERÍA");
-  areaBox(2,14,"HORNO PANADERÍA",0x92400e);
-
-  shelf(9,10,"CARNICERÍA");
-  areaBox(9,14,"ÁREA CARNICERÍA",0x7f1d1d);
-
-  areaBox(14,4,"PESCADERÍA",0x075985);
-  shelf(-12,3,"LÁCTEOS");
-  shelf(-5,3,"BÁSICOS");
-  shelf(2,3,"LIMPIEZA");
-
-  fridge(-5,-8,"REFRIGERADOR JAMÓN Y QUESOS");
-  areaBox(8,-8,"CAFETERÍA",0x78350f);
-  areaBox(-14,-11,"SERVICIO AL CLIENTE",0x0f766e);
-  areaBox(16,-11,"ACCESO PRIVADO EMPLEADOS",0x334155);
-
-  DATA.forEach(d=>product(d[0],d[1],d[2],d[3],d[4],d[5]));
-  avatar();
-  updateCamera();
-  hint("WASD/Flechas para moverte · Q/E para girar · Enter para interactuar");
-}
-
-function makeFloor(){
-  const floor=new THREE.Mesh(
-    new THREE.PlaneGeometry(44,58),
-    new THREE.MeshLambertMaterial({color:0xd9d4c8})
-  );
-  floor.rotation.x=-Math.PI/2;
-  scene.add(floor);
-
-  const grid=new THREE.GridHelper(58,58,0xffffff,0x9ca3af);
-  grid.position.y=.02;
-  scene.add(grid);
-}
-
-function makeWalls(){
-  box(0,-28,44,.5,3.4,0x111827,1.7);
-  box(0,28,44,.5,3.4,0x111827,1.7);
-  box(-22,0,.5,58,3.4,0x111827,1.7);
-  box(22,0,.5,58,3.4,0x111827,1.7);
-}
-
-function box(x,z,w,d,h,color,y){
-  const m=new THREE.Mesh(
-    new THREE.BoxGeometry(w,h,d),
-    new THREE.MeshLambertMaterial({color})
-  );
-  m.position.set(x,y,z);
-  scene.add(m);
-  return m;
-}
-
-function shelf(x,z,label){
-  box(x,z,6,1.4,1.4,0x7c3f12,.7);
-  box(x, z+.72,6.2,.12,.16,0xfbbf24,1.35);
-  sign(label,x,z+.25,0x111827,2.4);
-}
-
-function areaBox(x,z,label,color){
-  box(x,z,5.2,2.1,1.25,color,.62);
-  sign(label,x,z+1.35,color,2.2);
-}
-
-function fridge(x,z,label){
-  box(x,z,7,1.8,2.7,0x38bdf8,1.35);
-  box(x,z+.93,6.4,.08,2,0xdff8ff,1.35);
-  for(let i=0;i<6;i++){
-    box(x-2.5+i, z+.98, .55, .35, .25, i%2?0xfacc15:0xfca5a5, 1.35);
-  }
-  sign(label,x,z+.35,0x075985,3.2);
-}
-
-function makeCheckout(x,z){
-  checkoutBox=box(x,z,5,2.2,1.4,0x020617,.7);
-  box(x,z+.25,4.2,1.1,.15,0x334155,1);
-  box(x,z-.35,1.2,.12,1,0x67e8f9,2);
-  sign("CAJA - PAGAR",x,z+1.8,0x111827,2.8);
-}
-
-function product(name,price,emoji,x,z,color){
-  const mesh=box(x,z+.35,.65,.55,.55,color,1.85);
-  mesh.userData={name,price,emoji};
-  products.push(mesh);
-
-  // Producto visible encima como cartel pequeño
-  sign(emoji+" "+name,x,z+.95,0x020617,2.55,2.6,.65);
-}
-
-function avatar(){
-  const g=new THREE.Group();
-  scene.add(g);
-
-  const skin=0xf1c27d, hair=0x111111, shirt=0x111827, pants=0x2563eb, metal=0xe2e8f0;
-
-  const body=new THREE.Mesh(new THREE.CylinderGeometry(.34,.43,.95,14),new THREE.MeshLambertMaterial({color:shirt}));
-  body.position.y=.95; g.add(body);
-
-  const head=new THREE.Mesh(new THREE.SphereGeometry(.28,18,18),new THREE.MeshLambertMaterial({color:skin}));
-  head.position.y=1.62; g.add(head);
-
-  const hairMesh=new THREE.Mesh(new THREE.SphereGeometry(.3,18,18),new THREE.MeshLambertMaterial({color:hair}));
-  hairMesh.position.y=1.78; hairMesh.scale.set(1.05,.5,1.05); g.add(hairMesh);
-
-  const bang=new THREE.Mesh(new THREE.BoxGeometry(.45,.12,.17),new THREE.MeshLambertMaterial({color:hair}));
-  bang.position.set(0,1.67,.25); g.add(bang);
-
-  const leftArm=new THREE.Mesh(new THREE.BoxGeometry(.16,.62,.16),new THREE.MeshLambertMaterial({color:skin}));
-  leftArm.position.set(-.48,.95,.12); g.add(leftArm);
-
-  const rightArm=leftArm.clone(); rightArm.position.x=.48; g.add(rightArm);
-
-  const leftLeg=new THREE.Mesh(new THREE.BoxGeometry(.18,.6,.18),new THREE.MeshLambertMaterial({color:pants}));
-  leftLeg.position.set(-.16,.33,0); g.add(leftLeg);
-
-  const rightLeg=leftLeg.clone(); rightLeg.position.x=.16; g.add(rightLeg);
-
-  // Carrito delante
-  const cartGroup=new THREE.Group();
-  cartGroup.position.set(0,.42,1.45);
-
-  const basket=new THREE.Mesh(new THREE.BoxGeometry(1.25,.55,.95),new THREE.MeshLambertMaterial({color:metal}));
-  basket.position.y=.38; cartGroup.add(basket);
-
-  const hollow=new THREE.Mesh(new THREE.BoxGeometry(.95,.32,.7),new THREE.MeshLambertMaterial({color:0x0f172a}));
-  hollow.position.set(0,.45,.04); cartGroup.add(hollow);
-
-  const handle=new THREE.Mesh(new THREE.BoxGeometry(1.35,.08,.08),new THREE.MeshLambertMaterial({color:0x475569}));
-  handle.position.set(0,.85,-.55); cartGroup.add(handle);
-
-  [[-.48,.04,.39],[.48,.04,.39],[-.48,.04,-.39],[.48,.04,-.39]].forEach(p=>{
-    const wh=new THREE.Mesh(new THREE.CylinderGeometry(.12,.12,.08,12),new THREE.MeshLambertMaterial({color:0x030712}));
-    wh.rotation.z=Math.PI/2; wh.position.set(p[0],p[1],p[2]); cartGroup.add(wh);
-  });
-
-  g.add(cartGroup);
-  player.avatar=g;
-  player.parts={leftLeg,rightLeg,leftArm,rightArm,cartGroup};
-}
-
-function sign(text,x,z,color,y=2.8,w=4,h=.9){
-  const canvas=document.createElement("canvas");
-  canvas.width=512; canvas.height=128;
-  const ctx=canvas.getContext("2d");
-  ctx.fillStyle="rgba(0,0,0,.75)";
-  ctx.fillRect(10,24,492,80);
-  ctx.fillStyle="#fff";
-  ctx.font="bold 30px Arial";
-  ctx.textAlign="center";
-  ctx.textBaseline="middle";
-  ctx.fillText(text,256,64);
-  const texture=new THREE.CanvasTexture(canvas);
-  const sprite=new THREE.Sprite(new THREE.SpriteMaterial({map:texture,transparent:true}));
-  sprite.position.set(x,y,z);
-  sprite.scale.set(w,h,1);
-  scene.add(sprite);
-}
-
-function updateCamera(){
-  const fx=Math.sin(player.rot), fz=Math.cos(player.rot);
-  camera.position.set(player.x-fx*5.3,3.45,player.z-fz*5.3);
-  camera.lookAt(player.x+fx*5,1.85,player.z+fz*5);
-
-  if(player.avatar){
-    player.avatar.position.set(player.x,0,player.z);
-    player.avatar.rotation.y=player.rot;
-  }
-}
-
-function movePlayer(){
-  const speed=.13, turn=.045;
-  if(keys.turnLeft)player.rot+=turn;
-  if(keys.turnRight)player.rot-=turn;
-
-  let dx=0,dz=0;
-  const fx=Math.sin(player.rot), fz=Math.cos(player.rot);
-  const rx=Math.sin(player.rot-Math.PI/2), rz=Math.cos(player.rot-Math.PI/2);
-
-  if(keys.forward){dx+=fx*speed;dz+=fz*speed}
-  if(keys.backward){dx-=fx*speed;dz-=fz*speed}
-  if(keys.left){dx+=rx*speed;dz+=rz*speed}
-  if(keys.right){dx-=rx*speed;dz-=rz*speed}
-
-  const moving=Math.abs(dx)+Math.abs(dz)>0.001;
-  player.x=Math.max(-20,Math.min(20,player.x+dx));
-  player.z=Math.max(-26,Math.min(26,player.z+dz));
-
-  walk(moving);
-  updateCamera();
-  detect();
-}
-
-function walk(moving){
-  if(!player.parts)return;
-  const p=player.parts;
-  if(moving){
-    const t=Date.now()*0.012;
-    p.leftLeg.rotation.x=Math.sin(t)*.7;
-    p.rightLeg.rotation.x=-Math.sin(t)*.7;
-    p.leftArm.rotation.x=-Math.sin(t)*.45;
-    p.rightArm.rotation.x=Math.sin(t)*.45;
-    player.avatar.position.y=Math.abs(Math.sin(t))*.04;
-    p.cartGroup.rotation.z=Math.sin(t)*.02;
-  }else{
-    p.leftLeg.rotation.x*=.7; p.rightLeg.rotation.x*=.7;
-    p.leftArm.rotation.x*=.7; p.rightArm.rotation.x*=.7;
-    p.cartGroup.rotation.z*=.7;
-  }
-}
-
-function detect(){
-  let nearest=null, dist=2.1;
-  products.forEach(p=>{
-    const d=Math.hypot(p.position.x-player.x,p.position.z-player.z);
-    if(d<dist){dist=d;nearest=p}
-  });
-
-  const cd=checkoutBox?Math.hypot(checkoutBox.position.x-player.x,checkoutBox.position.z-player.z):999;
-  if(cd<4){
-    currentTarget={type:"checkout"};
-    hint("Estás en CAJA · Enter o 🛒 para pagar");
-    return;
-  }
-
-  if(nearest){
-    currentTarget={type:"product",data:nearest.userData};
-    hint("Producto cerca: "+nearest.userData.emoji+" "+nearest.userData.name+" RD$"+nearest.userData.price+" · Enter");
-  }else{
-    currentTarget=null;
-    hint("WASD/Flechas para moverte · Q/E para girar · Enter para interactuar");
-  }
-}
-
-function tryInteract(){
-  if(!currentTarget)return;
-
-  if(currentTarget.type==="checkout"){
-    document.getElementById("modalTitle").textContent="🧾 Caja de pago";
-    document.getElementById("modalText").innerHTML=cart.length
-      ? cart.map((p,i)=>`${i+1}. ${p.emoji} ${p.name} - RD$${p.price}`).join("<br>")+`<br><br><b>Total: RD$${total}</b><br><br>Pedido simulado confirmado.`
-      : "Tu carrito está vacío.";
-    document.getElementById("mainBtn").textContent="Finalizar";
-    document.getElementById("modal").style.display="flex";
-    return;
-  }
-
-  const p=currentTarget.data;
-  document.getElementById("modalTitle").textContent=p.emoji+" "+p.name;
-  document.getElementById("modalText").textContent="Precio: RD$"+p.price;
-  document.getElementById("mainBtn").textContent="Agregar";
-  document.getElementById("modal").style.display="flex";
-}
-
-function mainAction(){
-  if(!currentTarget){closeModal();return}
-  if(currentTarget.type==="checkout"){closeModal();return}
-  const p=currentTarget.data;
-  cart.push({...p});
-  total+=p.price;
-  renderCart();
-  closeModal();
-}
-
-function renderCart(){
-  document.getElementById("total").textContent=total;
-  document.getElementById("cartList").innerHTML=cart.length
-    ? cart.map((p,i)=>`${i+1}. ${p.emoji} ${p.name} - RD$${p.price}`).join("<br>")
-    : "Vacío";
-}
-
-function closeModal(){document.getElementById("modal").style.display="none"}
-function hint(t){document.getElementById("hint").textContent=t}
-
-function animate(){
-  if(!gameStarted)return;
-  requestAnimationFrame(animate);
-  movePlayer();
-  renderer.render(scene,camera);
-}
-
-document.addEventListener("keydown",e=>{
-  const k=e.key.toLowerCase();
-  if(k==="w"||e.key==="ArrowUp")keys.forward=true;
-  if(k==="s"||e.key==="ArrowDown")keys.backward=true;
-  if(k==="a"||e.key==="ArrowLeft")keys.left=true;
-  if(k==="d"||e.key==="ArrowRight")keys.right=true;
-  if(k==="q")keys.turnLeft=true;
-  if(k==="e")keys.turnRight=true;
-  if(e.key==="Enter")tryInteract();
-});
-document.addEventListener("keyup",e=>{
-  const k=e.key.toLowerCase();
-  if(k==="w"||e.key==="ArrowUp")keys.forward=false;
-  if(k==="s"||e.key==="ArrowDown")keys.backward=false;
-  if(k==="a"||e.key==="ArrowLeft")keys.left=false;
-  if(k==="d"||e.key==="ArrowRight")keys.right=false;
-  if(k==="q")keys.turnLeft=false;
-  if(k==="e")keys.turnRight=false;
-});
-function press(a){keys[a]=true}
-function release(a){keys[a]=false}
-window.addEventListener("resize",()=>{
-  if(!camera||!renderer)return;
-  camera.aspect=window.innerWidth/window.innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth,window.innerHeight);
-});
-</script>
+    <!-- Aviso para usuarios móviles -->
+    <div id="mobileAlert">
+        <div>
+            <p><strong>⚠️ Esta versión 3D solo está disponible en ordenadores.</strong></p>
+            <p>En tu teléfono móvil puedes usar la versión 2.5D de la página o visitar el
+            sitio más adelante desde un equipo de escritorio.</p>
+        </div>
+    </div>
+
+    <!--
+      Aquí debe ir el contenido de tu página 3D existente (escena, geometrías,
+      cámaras, etc.). Copia y pega el contenido de tu archivo actual entre este
+      comentario y la etiqueta de cierre </body>. Asegúrate de que todas las
+      referencias a Three.js y al código de inicialización sigan funcionando
+      correctamente. La función init3DSupermarket se encargará de verificar
+      si se debe mostrar el aviso para móviles.
+    -->
+
+    <script>
+      // Función que detecta si el dispositivo es móvil o la pantalla es pequeña
+      function init3DSupermarket() {
+        var isMobile = /Mobi|Android/i.test(navigator.userAgent) || window.innerWidth < 800;
+        if (isMobile) {
+          document.getElementById('mobileAlert').style.display = 'flex';
+          return;
+        }
+        // Aquí puedes llamar a tu función de inicialización de la escena 3D existente,
+        // por ejemplo: startGame() o init() según el código que ya tengas.
+        if (typeof startGame === 'function') {
+          startGame();
+        }
+      }
+
+      // Ejecutar la detección cuando la página se carga
+      window.addEventListener('load', init3DSupermarket);
+    </script>
 </body>
 </html>
