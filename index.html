@@ -121,13 +121,35 @@ body{overflow:hidden;background:#050505;color:white}
 
 /* PLAYER */
 #player{
-  position:absolute;width:58px;height:58px;border-radius:50%;
-  background:linear-gradient(135deg,#222,#000);
-  border:4px solid white;z-index:15;
-  box-shadow:10px 12px 0 rgba(0,0,0,.25),0 0 15px rgba(0,0,0,.5)
+  position:absolute;
+  width:78px;
+  height:90px;
+  border-radius:50%;
+  background:transparent;
+  border:none;
+  z-index:15;
+  overflow:visible;
+  pointer-events:none;
+  filter:drop-shadow(12px 14px 4px rgba(0,0,0,.28));
 }
 #player:after{
-  content:"👤";position:absolute;left:10px;top:8px;font-size:28px
+  content:"";
+}
+#avatar3dCanvas{
+  width:78px;
+  height:90px;
+  display:block;
+}
+#avatarFallback{
+  display:none;
+  width:58px;
+  height:58px;
+  border-radius:50%;
+  background:linear-gradient(135deg,#222,#000);
+  border:4px solid white;
+  align-items:center;
+  justify-content:center;
+  font-size:28px;
 }
 
 /* CART */
@@ -304,7 +326,7 @@ body{overflow:hidden;background:#050505;color:white}
 
     <div id="checkout" onclick="checkout()">CAJA 🧾</div>
 
-    <div id="player"></div>
+    <div id="player"><div id="avatarFallback">👤</div></div>
     <div id="cartIcon">🛒</div>
 
   </div>
@@ -373,8 +395,8 @@ function startGame(){
 }
 
 function updatePlayer(){
-  playerEl.style.left=player.x+"px";
-  playerEl.style.top=player.y+"px";
+  playerEl.style.left=(player.x-10)+"px";
+  playerEl.style.top=(player.y-35)+"px";
 
   cartIcon.style.left=(player.x-12)+"px";
   cartIcon.style.top=(player.y+62)+"px";
@@ -468,6 +490,97 @@ function showMessage(text){
 }
 
 window.addEventListener("resize",updatePlayer);
+</script>
+
+
+<!-- AVATAR 3D RÁPIDO - THREE.JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+  function createAvatar3D(){
+    const playerBox = document.getElementById("player");
+    const fallback = document.getElementById("avatarFallback");
+    if(!window.THREE || !playerBox){ if(fallback) fallback.style.display = "flex"; return; }
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(38, 78/90, 0.1, 100);
+    camera.position.set(0, 1.25, 6);
+    camera.lookAt(0, 1.1, 0);
+
+    const renderer = new THREE.WebGLRenderer({ alpha:true, antialias:true });
+    renderer.setSize(78, 90);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.domElement.id = "avatar3dCanvas";
+    playerBox.appendChild(renderer.domElement);
+
+    const group = new THREE.Group();
+    scene.add(group);
+
+    const light = new THREE.DirectionalLight(0xffffff, 1.5);
+    light.position.set(3, 5, 5);
+    scene.add(light);
+    scene.add(new THREE.AmbientLight(0xffffff, 0.85));
+
+    const skin = new THREE.MeshStandardMaterial({color:0xf1c27d, roughness:0.45});
+    const shirt = new THREE.MeshStandardMaterial({color:0x111827, roughness:0.55});
+    const pants = new THREE.MeshStandardMaterial({color:0x2563eb, roughness:0.5});
+    const shoes = new THREE.MeshStandardMaterial({color:0x050505, roughness:0.5});
+
+    const head = new THREE.Mesh(new THREE.SphereGeometry(0.42,32,32), skin);
+    head.position.y = 2.2; group.add(head);
+
+    const body = new THREE.Mesh(new THREE.CapsuleGeometry(0.42,0.85,8,16), shirt);
+    body.position.y = 1.35; group.add(body);
+
+    const leftArm = new THREE.Mesh(new THREE.CapsuleGeometry(0.13,0.75,6,12), skin);
+    leftArm.position.set(-0.55,1.42,0); leftArm.rotation.z = 0.18; group.add(leftArm);
+    const rightArm = new THREE.Mesh(new THREE.CapsuleGeometry(0.13,0.75,6,12), skin);
+    rightArm.position.set(0.55,1.42,0); rightArm.rotation.z = -0.18; group.add(rightArm);
+
+    const leftLeg = new THREE.Mesh(new THREE.CapsuleGeometry(0.15,0.8,6,12), pants);
+    leftLeg.position.set(-0.22,0.45,0); group.add(leftLeg);
+    const rightLeg = new THREE.Mesh(new THREE.CapsuleGeometry(0.15,0.8,6,12), pants);
+    rightLeg.position.set(0.22,0.45,0); group.add(rightLeg);
+
+    const leftShoe = new THREE.Mesh(new THREE.BoxGeometry(0.34,0.16,0.48), shoes);
+    leftShoe.position.set(-0.22,-0.03,0.08); group.add(leftShoe);
+    const rightShoe = new THREE.Mesh(new THREE.BoxGeometry(0.34,0.16,0.48), shoes);
+    rightShoe.position.set(0.22,-0.03,0.08); group.add(rightShoe);
+
+    const shadow = new THREE.Mesh(
+      new THREE.CircleGeometry(0.85,32),
+      new THREE.MeshBasicMaterial({color:0x000000, transparent:true, opacity:0.22})
+    );
+    shadow.rotation.x = -Math.PI/2; shadow.position.y = -0.15; group.add(shadow);
+
+    group.position.y = -0.7;
+    group.rotation.y = -0.45;
+    let t = 0, lastX = player.x, lastY = player.y;
+
+    function animate(){
+      requestAnimationFrame(animate);
+      const moving = Math.abs(player.x-lastX)>0 || Math.abs(player.y-lastY)>0;
+      if(moving){
+        t += 0.16;
+        group.position.y = -0.7 + Math.sin(t)*0.055;
+        leftLeg.rotation.x = Math.sin(t)*0.32;
+        rightLeg.rotation.x = -Math.sin(t)*0.32;
+        leftArm.rotation.x = -Math.sin(t)*0.28;
+        rightArm.rotation.x = Math.sin(t)*0.28;
+        if(player.x > lastX) group.rotation.y = -0.95;
+        if(player.x < lastX) group.rotation.y = 0.95;
+        if(player.y < lastY) group.rotation.y = 3.05;
+        if(player.y > lastY) group.rotation.y = 0;
+      } else {
+        group.position.y = -0.7 + Math.sin(Date.now()*0.003)*0.02;
+      }
+      lastX = player.x; lastY = player.y;
+      renderer.render(scene,camera);
+    }
+    animate();
+  }
+  window.addEventListener("load", ()=>setTimeout(createAvatar3D,500));
+})();
 </script>
 
 </body>
