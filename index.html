@@ -222,7 +222,7 @@ function init3D(){
   makeAvatar();
   updateCamera();
 
-  document.getElementById("hint").textContent="WASD/Flechas para moverte · Q/E para mirar · Acércate a productos";
+  document.getElementById("hint").textContent="WASD/Flechas para moverte · Q/E para mirar · Avatar caminando con carrito delante";
 }
 
 function makeWall(x,z,w,d,h){
@@ -339,43 +339,161 @@ function makeAvatar(){
   group.name="avatar";
   scene.add(group);
 
+  const skinMat=new THREE.MeshStandardMaterial({color:0xf1c27d,roughness:.45});
+  const shirtMat=new THREE.MeshStandardMaterial({color:0x111827,roughness:.5});
+  const pantsMat=new THREE.MeshStandardMaterial({color:0x2563eb,roughness:.5});
+  const hairMat=new THREE.MeshStandardMaterial({color:0x111111,roughness:.7});
+  const shoeMat=new THREE.MeshStandardMaterial({color:0x030712,roughness:.6});
+  const cartMat=new THREE.MeshStandardMaterial({color:0xcbd5e1,metalness:.3,roughness:.25});
+  const cartDarkMat=new THREE.MeshStandardMaterial({color:0x475569,metalness:.25,roughness:.35});
+
+  // Cuerpo
   const body=new THREE.Mesh(
-    new THREE.CylinderGeometry(.32,.42,.9,16),
-    new THREE.MeshStandardMaterial({color:0x111827})
+    new THREE.CylinderGeometry(.34,.43,.95,18),
+    shirtMat
   );
-  body.position.y=.9;
+  body.position.y=.95;
   body.castShadow=true;
   group.add(body);
 
+  // Cabeza
   const head=new THREE.Mesh(
     new THREE.SphereGeometry(.27,24,24),
-    new THREE.MeshStandardMaterial({color:0xf1c27d})
+    skinMat
   );
-  head.position.y=1.55;
+  head.position.y=1.62;
   head.castShadow=true;
   group.add(head);
 
-  const leftLeg=new THREE.Mesh(
-    new THREE.BoxGeometry(.18,.55,.18),
-    new THREE.MeshStandardMaterial({color:0x2563eb})
+  // Cabello
+  const hair=new THREE.Mesh(
+    new THREE.SphereGeometry(.295,24,24),
+    hairMat
   );
-  leftLeg.position.set(-.15,.28,0);
+  hair.position.y=1.77;
+  hair.scale.set(1.05,.48,1.05);
+  hair.castShadow=true;
+  group.add(hair);
+
+  const bang=new THREE.Mesh(
+    new THREE.BoxGeometry(.42,.12,.16),
+    hairMat
+  );
+  bang.position.set(0,1.66,.22);
+  bang.rotation.x=-.2;
+  bang.castShadow=true;
+  group.add(bang);
+
+  // Brazos
+  const leftArm=new THREE.Mesh(
+    new THREE.BoxGeometry(.16,.62,.16),
+    skinMat
+  );
+  leftArm.position.set(-.48,.95,.12);
+  leftArm.castShadow=true;
+  group.add(leftArm);
+
+  const rightArm=new THREE.Mesh(
+    new THREE.BoxGeometry(.16,.62,.16),
+    skinMat
+  );
+  rightArm.position.set(.48,.95,.12);
+  rightArm.castShadow=true;
+  group.add(rightArm);
+
+  // Piernas
+  const leftLeg=new THREE.Mesh(
+    new THREE.BoxGeometry(.18,.6,.18),
+    pantsMat
+  );
+  leftLeg.position.set(-.16,.33,0);
   leftLeg.castShadow=true;
   group.add(leftLeg);
 
-  const rightLeg=leftLeg.clone();
-  rightLeg.position.x=.15;
+  const rightLeg=new THREE.Mesh(
+    new THREE.BoxGeometry(.18,.6,.18),
+    pantsMat
+  );
+  rightLeg.position.set(.16,.33,0);
+  rightLeg.castShadow=true;
   group.add(rightLeg);
 
-  const cartMesh=new THREE.Mesh(
-    new THREE.BoxGeometry(.9,.45,.75),
-    new THREE.MeshStandardMaterial({color:0xcbd5e1,metalness:.25,roughness:.3})
+  // Zapatos
+  const leftShoe=new THREE.Mesh(
+    new THREE.BoxGeometry(.25,.12,.38),
+    shoeMat
   );
-  cartMesh.position.set(.75,.35,-.15);
-  cartMesh.castShadow=true;
-  group.add(cartMesh);
+  leftShoe.position.set(-.16,.04,.07);
+  leftShoe.castShadow=true;
+  group.add(leftShoe);
+
+  const rightShoe=new THREE.Mesh(
+    new THREE.BoxGeometry(.25,.12,.38),
+    shoeMat
+  );
+  rightShoe.position.set(.16,.04,.07);
+  rightShoe.castShadow=true;
+  group.add(rightShoe);
+
+  // Carrito delante del avatar
+  const cartGroup=new THREE.Group();
+  cartGroup.position.set(0,.34,1.05);
+
+  const basket=new THREE.Mesh(
+    new THREE.BoxGeometry(1.05,.5,.85),
+    cartMat
+  );
+  basket.position.y=.32;
+  basket.castShadow=true;
+  cartGroup.add(basket);
+
+  const inner=new THREE.Mesh(
+    new THREE.BoxGeometry(.82,.34,.62),
+    new THREE.MeshStandardMaterial({color:0x111827,roughness:.45})
+  );
+  inner.position.set(0,.42,.02);
+  cartGroup.add(inner);
+
+  const handle=new THREE.Mesh(
+    new THREE.BoxGeometry(1.15,.08,.08),
+    cartDarkMat
+  );
+  handle.position.set(0,.8,-.5);
+  handle.castShadow=true;
+  cartGroup.add(handle);
+
+  const frontBar=new THREE.Mesh(
+    new THREE.BoxGeometry(1.0,.08,.08),
+    cartDarkMat
+  );
+  frontBar.position.set(0,.65,.48);
+  frontBar.castShadow=true;
+  cartGroup.add(frontBar);
+
+  const wheelGeo=new THREE.CylinderGeometry(.11,.11,.08,16);
+  const wheelPositions=[
+    [-.42,.02,.34],[.42,.02,.34],[-.42,.02,-.34],[.42,.02,-.34]
+  ];
+  wheelPositions.forEach(pos=>{
+    const wheel=new THREE.Mesh(wheelGeo,shoeMat);
+    wheel.rotation.z=Math.PI/2;
+    wheel.position.set(pos[0],pos[1],pos[2]);
+    wheel.castShadow=true;
+    cartGroup.add(wheel);
+  });
+
+  group.add(cartGroup);
 
   player.avatar=group;
+  player.avatarParts={
+    leftLeg,
+    rightLeg,
+    leftArm,
+    rightArm,
+    leftShoe,
+    rightShoe,
+    cartGroup
+  };
 }
 
 function createTextSprite(message){
@@ -430,14 +548,53 @@ function movePlayer(){
   if(keys.left){dx+=rx*speed;dz+=rz*speed}
   if(keys.right){dx-=rx*speed;dz-=rz*speed}
 
+  const moving=Math.abs(dx)>0.001 || Math.abs(dz)>0.001;
+
   player.x+=dx;
   player.z+=dz;
 
   player.x=Math.max(-16,Math.min(16,player.x));
   player.z=Math.max(-22,Math.min(22,player.z));
 
+  animateAvatarWalk(moving);
+
   updateCamera();
   detectNearby();
+}
+
+function animateAvatarWalk(moving){
+  if(!player.avatarParts)return;
+
+  const p=player.avatarParts;
+
+  if(moving){
+    const t=Date.now()*0.012;
+
+    p.leftLeg.rotation.x=Math.sin(t)*0.75;
+    p.rightLeg.rotation.x=-Math.sin(t)*0.75;
+
+    p.leftArm.rotation.x=-Math.sin(t)*0.48;
+    p.rightArm.rotation.x=Math.sin(t)*0.48;
+
+    p.leftShoe.rotation.x=Math.sin(t)*0.45;
+    p.rightShoe.rotation.x=-Math.sin(t)*0.45;
+
+    player.avatar.position.y=Math.abs(Math.sin(t))*0.04;
+
+    p.cartGroup.position.y=.34+Math.abs(Math.sin(t))*0.025;
+    p.cartGroup.rotation.z=Math.sin(t)*0.018;
+
+  }else{
+    p.leftLeg.rotation.x*=0.72;
+    p.rightLeg.rotation.x*=0.72;
+    p.leftArm.rotation.x*=0.72;
+    p.rightArm.rotation.x*=0.72;
+    p.leftShoe.rotation.x*=0.72;
+    p.rightShoe.rotation.x*=0.72;
+    player.avatar.position.y*=0.72;
+    p.cartGroup.rotation.z*=0.72;
+    p.cartGroup.position.y=.34;
+  }
 }
 
 function detectNearby(){
@@ -459,7 +616,7 @@ function detectNearby(){
   }else{
     currentProduct=null;
     document.getElementById("hint").textContent=
-      "WASD/Flechas para moverte · Q/E para mirar · Acércate a productos";
+      "WASD/Flechas para moverte · Q/E para mirar · Avatar caminando con carrito delante";
   }
 }
 
