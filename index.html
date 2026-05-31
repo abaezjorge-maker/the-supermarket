@@ -1,69 +1,231 @@
-<!DOCTYPE html>
+from pathlib import Path
+
+html = """<!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>THE SUPERMARKET 3D</title>
-  <!-- Incluye aquí todos tus estilos CSS y scripts de Three.js según tu versión actual -->
-  <style>
-    /* Ejemplo de estilos básicos; reemplaza con los de tu proyecto */
-    body {
-      margin: 0;
-      background: #020617;
-      color: #fff;
-      font-family: sans-serif;
-    }
-    #canvas3d {
-      width: 100%;
-      height: 100vh;
-      display: block;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THE SUPERMARKET 3D</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
+body{overflow:hidden;background:#050505;color:white}
+#startScreen{position:fixed;inset:0;background:radial-gradient(circle,#1e293b,#020617);z-index:50;display:flex;align-items:center;justify-content:center;text-align:center;padding:20px}
+.startBox{width:92%;max-width:540px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);border-radius:24px;padding:32px;box-shadow:0 30px 80px rgba(0,0,0,.45)}
+.startBox h1{font-size:38px;color:#67e8f9;letter-spacing:3px;margin-bottom:12px}
+.startBox p{color:#cbd5e1;line-height:1.5;margin-bottom:12px}
+.startBox button{padding:14px 36px;border:none;border-radius:999px;background:#67e8f9;color:#020617;font-weight:900;font-size:18px;cursor:pointer;margin-top:10px}
+#hud{position:fixed;top:15px;left:15px;z-index:20;background:rgba(0,0,0,.72);border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:14px;width:280px;display:none}
+#hud h2{color:#67e8f9;font-size:18px;margin-bottom:8px}
+#cartList{font-size:13px;line-height:1.5;max-height:160px;overflow:auto;margin-top:8px;color:#e2e8f0}
+#hint{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:rgba(0,0,0,.78);border:1px solid rgba(255,255,255,.14);padding:12px 18px;border-radius:999px;z-index:20;max-width:92%;text-align:center;display:none}
+#modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:70;align-items:center;justify-content:center;padding:20px}
+.modalBox{background:white;color:#020617;border-radius:22px;padding:25px;width:92%;max-width:420px;text-align:center}
+.modalBox h2{margin-bottom:12px}.modalBox p{margin-bottom:14px;line-height:1.5}
+.modalBox button{border:none;border-radius:14px;padding:12px 20px;font-weight:900;cursor:pointer;margin:5px}
+#mainBtn{background:#020617;color:white}.closeBtn{background:#e5e7eb;color:#111827}
+.mobilePage{min-height:100vh;background:radial-gradient(circle at top,#1e293b,#020617 55%);color:white;overflow-y:auto;padding:24px 18px 160px}
+.mobileHero{text-align:center;margin-bottom:24px}.mobileHero h1{color:#67e8f9;font-size:2rem;margin-bottom:10px}.mobileHero p{color:#cbd5e1;line-height:1.5}
+.mobileBadge{display:inline-block;padding:8px 14px;border-radius:999px;background:rgba(103,232,249,.12);border:1px solid rgba(103,232,249,.35);color:#67e8f9;margin-bottom:15px;font-weight:bold}
+.mobileNotice{background:rgba(250,204,21,.12);border:1px solid rgba(250,204,21,.35);color:#fde68a;padding:12px;border-radius:16px;margin-bottom:18px;line-height:1.45}
+.mobileSection{margin-bottom:25px}.mobileSection h2{color:#e2e8f0;font-size:1.2rem;margin-bottom:12px}.mobileGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.mobileItem{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:18px 10px;text-align:center;min-height:125px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer}
+.mobileItem .emoji{font-size:2.2rem;margin-bottom:8px}.mobileItem strong{color:white;margin-bottom:4px}.mobileItem span{color:#67e8f9;font-weight:bold}
+.mobileCartBar{position:fixed;left:0;right:0;bottom:0;background:#020617;border-top:1px solid rgba(255,255,255,.15);padding:14px 16px;z-index:100;box-shadow:0 -12px 40px rgba(0,0,0,.45)}
+.mobileCartBar h3{color:#67e8f9;margin-bottom:5px}#mobileCartList{color:#cbd5e1;font-size:.85rem;max-height:70px;overflow:auto;line-height:1.45}
+.mobilePayBtn{width:100%;margin-top:10px;padding:12px;border:none;border-radius:14px;background:#67e8f9;color:#020617;font-weight:900;cursor:pointer}
+@media(max-width:800px){body{overflow:auto}}
+</style>
 </head>
-<body onload="init3DSupermarket()">
 
-  <!-- Contenedor o canvas para Three.js -->
-  <canvas id="canvas3d"></canvas>
+<body>
 
-  <script>
-    function init3DSupermarket() {
-      // Detectar si el dispositivo es móvil o el ancho de pantalla es pequeño
-      const isMobile = /Mobi/i.test(navigator.userAgent) || window.innerWidth < 800;
-      if (isMobile) {
-        // Redirigir a la versión 2.5 D automáticamente
-        window.location.href = "index.html";
-        return;
-      }
+<div id="startScreen">
+  <div class="startBox">
+    <h1>THE SUPERMARKET</h1>
+    <p>Experiencia de compra digital.</p>
+    <p id="deviceText">Detectando dispositivo...</p>
+    <button onclick="startExperience()">ENTRAR</button>
+  </div>
+</div>
 
-      // A partir de aquí inicializa tu escena Three.js como en tu página original
-      // Este bloque debería contener tu código actual: renderer, escena, cámara, etc.
-      // Ejemplo mínimo:
-      const canvas = document.getElementById('canvas3d');
-      const renderer = new THREE.WebGLRenderer({ canvas });
-      renderer.setSize(window.innerWidth, window.innerHeight);
+<div id="hud">
+  <h2>🛒 Carrito 3D</h2>
+  <p>Total: RD$<span id="total">0</span></p>
+  <div id="cartList">Vacío</div>
+</div>
 
-      const scene = new THREE.Scene();
-      const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-      camera.position.set(0, 2, 5);
+<div id="hint">Pulsa ENTRAR para comenzar.</div>
 
-      const geometry = new THREE.BoxGeometry(1, 1, 1);
-      const material = new THREE.MeshBasicMaterial({ color: 0x67e8f9 });
-      const cube = new THREE.Mesh(geometry, material);
-      scene.add(cube);
+<div id="modal">
+  <div class="modalBox">
+    <h2 id="modalTitle"></h2>
+    <p id="modalText"></p>
+    <button id="mainBtn" onclick="mainAction()">Agregar</button>
+    <button class="closeBtn" onclick="closeModal()">Cerrar</button>
+  </div>
+</div>
 
-      function animate() {
-        requestAnimationFrame(animate);
-        cube.rotation.y += 0.01;
-        renderer.render(scene, camera);
-      }
-      animate();
-    }
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
-    // Ajustar el tamaño del renderer al redimensionar la ventana
-    window.addEventListener('resize', function() {
-      // Actualiza el renderer y la cámara si es necesario
-    });
-  </script>
+<script>
+const isPhone=/Android|iPhone|iPad|iPod|Mobi|Mobile/i.test(navigator.userAgent)||window.innerWidth<800;
+
+document.addEventListener("DOMContentLoaded",()=>{
+  document.getElementById("deviceText").textContent=isPhone
+  ?"En teléfono se abrirá la versión móvil ligera dentro de este mismo archivo."
+  :"En computadora se abrirá la versión 3D completa.";
+});
+
+function startExperience(){
+  if(isPhone){loadMobileVersion();}else{startGame3D();}
+}
+
+const MOBILE_PRODUCTS=[
+{cat:"Frutas",name:"Manzana",price:35,emoji:"🍎"},{cat:"Frutas",name:"Banana",price:25,emoji:"🍌"},{cat:"Frutas",name:"Uvas",price:120,emoji:"🍇"},
+{cat:"Bebidas",name:"Agua",price:30,emoji:"💧"},{cat:"Bebidas",name:"Jugo",price:75,emoji:"🧃"},{cat:"Bebidas",name:"Refresco",price:95,emoji:"🥤"},
+{cat:"Panadería",name:"Pan",price:60,emoji:"🍞"},{cat:"Panadería",name:"Bizcocho",price:250,emoji:"🍰"},{cat:"Panadería",name:"Croissant",price:95,emoji:"🥐"},
+{cat:"Carnicería",name:"Pollo",price:280,emoji:"🍗"},{cat:"Carnicería",name:"Carne",price:350,emoji:"🥩"},{cat:"Carnicería",name:"Chuleta",price:320,emoji:"🥩"},
+{cat:"Pescadería",name:"Pescado",price:300,emoji:"🐟"},{cat:"Pescadería",name:"Camarones",price:450,emoji:"🦐"},
+{cat:"Lácteos",name:"Leche",price:95,emoji:"🥛"},{cat:"Lácteos",name:"Queso",price:160,emoji:"🧀"},{cat:"Refrigerados",name:"Jamón",price:210,emoji:"🥓"},{cat:"Refrigerados",name:"Queso Gouda",price:260,emoji:"🧀"},
+{cat:"Básicos",name:"Arroz",price:180,emoji:"🍚"},{cat:"Básicos",name:"Aceite",price:240,emoji:"🛢️"},{cat:"Básicos",name:"Habichuelas",price:120,emoji:"🫘"},
+{cat:"Limpieza",name:"Detergente",price:230,emoji:"🧴"},{cat:"Limpieza",name:"Papel",price:140,emoji:"🧻"},{cat:"Limpieza",name:"Jabón",price:75,emoji:"🧼"},
+{cat:"Cafetería",name:"Café listo",price:120,emoji:"☕"},{cat:"Cafetería",name:"Sandwich",price:180,emoji:"🥪"}
+];
+
+let mobileCart=[],mobileTotal=0;
+
+function loadMobileVersion(){
+  document.body.style.overflow="auto";
+  document.body.innerHTML=`
+  <div class="mobilePage">
+    <div class="mobileHero">
+      <div class="mobileBadge">Versión móvil ligera</div>
+      <h1>🏪 THE SUPERMARKET</h1>
+      <p>La versión 3D completa está optimizada para computadora. En teléfono puedes comprar desde esta versión rápida.</p>
+    </div>
+    <div class="mobileNotice">⚠️ Estás usando la versión móvil. Para caminar en 3D por el supermercado, entra desde una laptop o computadora.</div>
+    <div id="mobileSections"></div>
+  </div>
+  <div class="mobileCartBar">
+    <h3>🛒 Carrito</h3>
+    <p>Total: RD$<span id="mobileTotal">0</span></p>
+    <div id="mobileCartList">Vacío</div>
+    <button class="mobilePayBtn" onclick="mobileCheckout()">Finalizar pedido simulado</button>
+  </div>`;
+  renderMobileProducts();
+}
+
+function renderMobileProducts(){
+  const container=document.getElementById("mobileSections");
+  const cats=[...new Set(MOBILE_PRODUCTS.map(p=>p.cat))];
+  container.innerHTML=cats.map(cat=>{
+    const items=MOBILE_PRODUCTS.filter(p=>p.cat===cat).map(p=>`
+      <div class="mobileItem" onclick="addMobileItem('${p.name}',${p.price},'${p.emoji}')">
+        <div class="emoji">${p.emoji}</div><strong>${p.name}</strong><span>RD$${p.price}</span>
+      </div>`).join("");
+    return `<div class="mobileSection"><h2>${cat}</h2><div class="mobileGrid">${items}</div></div>`;
+  }).join("");
+}
+
+function addMobileItem(name,price,emoji){
+  mobileCart.push({name,price,emoji});mobileTotal+=price;
+  document.getElementById("mobileTotal").textContent=mobileTotal;
+  document.getElementById("mobileCartList").innerHTML=mobileCart.map((p,i)=>`${i+1}. ${p.emoji} ${p.name} - RD$${p.price}`).join("<br>");
+}
+
+function mobileCheckout(){
+  if(mobileCart.length===0){alert("Tu carrito está vacío.");return;}
+  alert("Pedido simulado confirmado. Total: RD$"+mobileTotal);
+}
+
+/* 3D PC */
+let scene,camera,renderer,checkoutBox,currentTarget;
+let player={x:0,z:22,rot:Math.PI},keys={},cart=[],total=0,products=[],gameStarted=false;
+
+const DATA=[
+["Manzana",35,"🍎",-13,9,0xef4444],["Banana",25,"🍌",-12,9,0xfacc15],["Uvas",120,"🍇",-11,9,0x7c3aed],
+["Agua",30,"💧",-6,9,0x38bdf8],["Jugo",75,"🧃",-5,9,0xfb923c],["Refresco",95,"🥤",-4,9,0xef4444],
+["Pan",60,"🍞",1,9,0xd97706],["Bizcocho",250,"🍰",2,9,0xf9a8d4],["Dona",80,"🍩",3,9,0xb45309],
+["Pollo",280,"🍗",8,9,0xf97316],["Carne",350,"🥩",9,9,0x991b1b],["Chuleta",320,"🥩",10,9,0xb91c1c],
+["Pescado",300,"🐟",14,3,0x60a5fa],["Camarones",450,"🦐",15,3,0xf97316],
+["Leche",95,"🥛",-13,2,0xffffff],["Queso",160,"🧀",-12,2,0xfacc15],["Yogurt",70,"🍶",-11,2,0xf8fafc],
+["Arroz",180,"🍚",-6,2,0xf8fafc],["Aceite",240,"🛢️",-5,2,0xfbbf24],["Habichuelas",120,"🫘",-4,2,0x7c2d12],
+["Detergente",230,"🧴",1,2,0x60a5fa],["Papel",140,"🧻",2,2,0xffffff],["Jabón",75,"🧼",3,2,0x5eead4],
+["Jamón",210,"🥓",-6,-8,0xfca5a5],["Queso Gouda",260,"🧀",-5,-8,0xfacc15],["Queso Cheddar",240,"🧀",-4,-8,0xf59e0b],
+["Café listo",120,"☕",7,-8,0x78350f],["Sandwich",180,"🥪",8,-8,0xfbbf24],["Croissant",95,"🥐",9,-8,0xd97706]
+];
+
+function startGame3D(){
+  if(!window.THREE){alert("Three.js no cargó. Revisa la conexión a internet.");return;}
+  document.getElementById("startScreen").style.display="none";
+  document.getElementById("hud").style.display="block";
+  document.getElementById("hint").style.display="block";
+  gameStarted=true;init3D();animate();
+}
+
+function init3D(){
+  scene=new THREE.Scene();scene.background=new THREE.Color(0x172033);
+  camera=new THREE.PerspectiveCamera(72,window.innerWidth/window.innerHeight,0.1,1000);
+  renderer=new THREE.WebGLRenderer({antialias:false});renderer.setSize(window.innerWidth,window.innerHeight);renderer.setPixelRatio(1);document.body.appendChild(renderer.domElement);
+  scene.add(new THREE.AmbientLight(0xffffff,0.95));
+  const light=new THREE.DirectionalLight(0xffffff,1);light.position.set(8,18,12);scene.add(light);
+  makeFloor();makeWalls();sign("ENTRADA",0,26,0x0f172a);makeCheckout(15,20);
+  shelf(-12,10,"FRUTAS");shelf(-5,10,"BEBIDAS");shelf(2,10,"PANADERÍA");areaBox(2,14,"HORNO PANADERÍA",0x92400e);
+  shelf(9,10,"CARNICERÍA");areaBox(9,14,"ÁREA CARNICERÍA",0x7f1d1d);
+  areaBox(14,4,"PESCADERÍA",0x075985);shelf(-12,3,"LÁCTEOS");shelf(-5,3,"BÁSICOS");shelf(2,3,"LIMPIEZA");
+  fridge(-5,-8,"REFRIGERADOR JAMÓN Y QUESOS");areaBox(8,-8,"CAFETERÍA",0x78350f);areaBox(-14,-11,"SERVICIO AL CLIENTE",0x0f766e);areaBox(16,-11,"ACCESO PRIVADO EMPLEADOS",0x334155);
+  DATA.forEach(d=>product(d[0],d[1],d[2],d[3],d[4],d[5]));avatar();updateCamera();
+  hint("WASD/Flechas para moverte · Q/E para girar · Enter para interactuar");
+}
+
+function makeFloor(){const floor=new THREE.Mesh(new THREE.PlaneGeometry(44,58),new THREE.MeshLambertMaterial({color:0xd9d4c8}));floor.rotation.x=-Math.PI/2;scene.add(floor);const grid=new THREE.GridHelper(58,58,0xffffff,0x9ca3af);grid.position.y=.02;scene.add(grid)}
+function makeWalls(){box(0,-28,44,.5,3.4,0x111827,1.7);box(0,28,44,.5,3.4,0x111827,1.7);box(-22,0,.5,58,3.4,0x111827,1.7);box(22,0,.5,58,3.4,0x111827,1.7)}
+function box(x,z,w,d,h,color,y){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),new THREE.MeshLambertMaterial({color}));m.position.set(x,y,z);scene.add(m);return m}
+function shelf(x,z,label){box(x,z,6,1.4,1.4,0x7c3f12,.7);box(x,z+.72,6.2,.12,.16,0xfbbf24,1.35);sign(label,x,z+.25,0x111827,2.4)}
+function areaBox(x,z,label,color){box(x,z,5.2,2.1,1.25,color,.62);sign(label,x,z+1.35,color,2.2)}
+function fridge(x,z,label){box(x,z,7,1.8,2.7,0x38bdf8,1.35);box(x,z+.93,6.4,.08,2,0xdff8ff,1.35);for(let i=0;i<6;i++){box(x-2.5+i,z+.98,.55,.35,.25,i%2?0xfacc15:0xfca5a5,1.35)}sign(label,x,z+.35,0x075985,3.2)}
+function makeCheckout(x,z){checkoutBox=box(x,z,5,2.2,1.4,0x020617,.7);box(x,z+.25,4.2,1.1,.15,0x334155,1);box(x,z-.35,1.2,.12,1,0x67e8f9,2);sign("CAJA - PAGAR",x,z+1.8,0x111827,2.8)}
+function product(name,price,emoji,x,z,color){const mesh=box(x,z+.35,.65,.55,.55,color,1.85);mesh.userData={name,price,emoji};products.push(mesh);sign(emoji+" "+name,x,z+.95,0x020617,2.55,2.6,.65)}
+
+function avatar(){
+  const g=new THREE.Group();scene.add(g);
+  const body=new THREE.Mesh(new THREE.CylinderGeometry(.34,.43,.95,14),new THREE.MeshLambertMaterial({color:0x111827}));body.position.y=.95;g.add(body);
+  const head=new THREE.Mesh(new THREE.SphereGeometry(.28,18,18),new THREE.MeshLambertMaterial({color:0xf1c27d}));head.position.y=1.62;g.add(head);
+  const hairMesh=new THREE.Mesh(new THREE.SphereGeometry(.3,18,18),new THREE.MeshLambertMaterial({color:0x111111}));hairMesh.position.y=1.78;hairMesh.scale.set(1.05,.5,1.05);g.add(hairMesh);
+  const bang=new THREE.Mesh(new THREE.BoxGeometry(.45,.12,.17),new THREE.MeshLambertMaterial({color:0x111111}));bang.position.set(0,1.67,.25);g.add(bang);
+  const leftArm=new THREE.Mesh(new THREE.BoxGeometry(.16,.62,.16),new THREE.MeshLambertMaterial({color:0xf1c27d}));leftArm.position.set(-.48,.95,.12);g.add(leftArm);
+  const rightArm=leftArm.clone();rightArm.position.x=.48;g.add(rightArm);
+  const leftLeg=new THREE.Mesh(new THREE.BoxGeometry(.18,.6,.18),new THREE.MeshLambertMaterial({color:0x2563eb}));leftLeg.position.set(-.16,.33,0);g.add(leftLeg);
+  const rightLeg=leftLeg.clone();rightLeg.position.x=.16;g.add(rightLeg);
+  const cartGroup=new THREE.Group();cartGroup.position.set(0,.42,1.45);
+  const basket=new THREE.Mesh(new THREE.BoxGeometry(1.25,.55,.95),new THREE.MeshLambertMaterial({color:0xe2e8f0}));basket.position.y=.38;cartGroup.add(basket);
+  const hollow=new THREE.Mesh(new THREE.BoxGeometry(.95,.32,.7),new THREE.MeshLambertMaterial({color:0x0f172a}));hollow.position.set(0,.45,.04);cartGroup.add(hollow);
+  const handle=new THREE.Mesh(new THREE.BoxGeometry(1.35,.08,.08),new THREE.MeshLambertMaterial({color:0x475569}));handle.position.set(0,.85,-.55);cartGroup.add(handle);
+  [[-.48,.04,.39],[.48,.04,.39],[-.48,.04,-.39],[.48,.04,-.39]].forEach(p=>{const wh=new THREE.Mesh(new THREE.CylinderGeometry(.12,.12,.08,12),new THREE.MeshLambertMaterial({color:0x030712}));wh.rotation.z=Math.PI/2;wh.position.set(p[0],p[1],p[2]);cartGroup.add(wh)});
+  g.add(cartGroup);player.avatar=g;player.parts={leftLeg,rightLeg,leftArm,rightArm,cartGroup};
+}
+
+function sign(text,x,z,color,y=2.8,w=4,h=.9){const canvas=document.createElement("canvas");canvas.width=512;canvas.height=128;const ctx=canvas.getContext("2d");ctx.fillStyle="rgba(0,0,0,.75)";ctx.fillRect(10,24,492,80);ctx.fillStyle="#fff";ctx.font="bold 30px Arial";ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillText(text,256,64);const texture=new THREE.CanvasTexture(canvas);const sprite=new THREE.Sprite(new THREE.SpriteMaterial({map:texture,transparent:true}));sprite.position.set(x,y,z);sprite.scale.set(w,h,1);scene.add(sprite)}
+function updateCamera(){const fx=Math.sin(player.rot),fz=Math.cos(player.rot);camera.position.set(player.x-fx*5.3,3.45,player.z-fz*5.3);camera.lookAt(player.x+fx*5,1.85,player.z+fz*5);if(player.avatar){player.avatar.position.set(player.x,0,player.z);player.avatar.rotation.y=player.rot}}
+function movePlayer(){const speed=.13,turn=.045;if(keys.turnLeft)player.rot+=turn;if(keys.turnRight)player.rot-=turn;let dx=0,dz=0;const fx=Math.sin(player.rot),fz=Math.cos(player.rot),rx=Math.sin(player.rot-Math.PI/2),rz=Math.cos(player.rot-Math.PI/2);if(keys.forward){dx+=fx*speed;dz+=fz*speed}if(keys.backward){dx-=fx*speed;dz-=fz*speed}if(keys.left){dx+=rx*speed;dz+=rz*speed}if(keys.right){dx-=rx*speed;dz-=rz*speed}const moving=Math.abs(dx)+Math.abs(dz)>0.001;player.x=Math.max(-20,Math.min(20,player.x+dx));player.z=Math.max(-26,Math.min(26,player.z+dz));walk(moving);updateCamera();detect()}
+function walk(moving){if(!player.parts)return;const p=player.parts;if(moving){const t=Date.now()*0.012;p.leftLeg.rotation.x=Math.sin(t)*.7;p.rightLeg.rotation.x=-Math.sin(t)*.7;p.leftArm.rotation.x=-Math.sin(t)*.45;p.rightArm.rotation.x=Math.sin(t)*.45;player.avatar.position.y=Math.abs(Math.sin(t))*.04;p.cartGroup.rotation.z=Math.sin(t)*.02}else{p.leftLeg.rotation.x*=.7;p.rightLeg.rotation.x*=.7;p.leftArm.rotation.x*=.7;p.rightArm.rotation.x*=.7;p.cartGroup.rotation.z*=.7}}
+function detect(){let nearest=null,dist=2.1;products.forEach(p=>{const d=Math.hypot(p.position.x-player.x,p.position.z-player.z);if(d<dist){dist=d;nearest=p}});const cd=checkoutBox?Math.hypot(checkoutBox.position.x-player.x,checkoutBox.position.z-player.z):999;if(cd<4){currentTarget={type:"checkout"};hint("Estás en CAJA · Enter para pagar");return}if(nearest){currentTarget={type:"product",data:nearest.userData};hint("Producto cerca: "+nearest.userData.emoji+" "+nearest.userData.name+" RD$"+nearest.userData.price+" · Enter")}else{currentTarget=null;hint("WASD/Flechas para moverte · Q/E para girar · Enter para interactuar")}}
+function tryInteract(){if(!currentTarget)return;if(currentTarget.type==="checkout"){document.getElementById("modalTitle").textContent="🧾 Caja de pago";document.getElementById("modalText").innerHTML=cart.length?cart.map((p,i)=>`${i+1}. ${p.emoji} ${p.name} - RD$${p.price}`).join("<br>")+`<br><br><b>Total: RD$${total}</b><br><br>Pedido simulado confirmado.`:"Tu carrito está vacío.";document.getElementById("mainBtn").textContent="Finalizar";document.getElementById("modal").style.display="flex";return}const p=currentTarget.data;document.getElementById("modalTitle").textContent=p.emoji+" "+p.name;document.getElementById("modalText").textContent="Precio: RD$"+p.price;document.getElementById("mainBtn").textContent="Agregar";document.getElementById("modal").style.display="flex"}
+function mainAction(){if(!currentTarget){closeModal();return}if(currentTarget.type==="checkout"){closeModal();return}const p=currentTarget.data;cart.push({...p});total+=p.price;renderCart();closeModal()}
+function renderCart(){document.getElementById("total").textContent=total;document.getElementById("cartList").innerHTML=cart.length?cart.map((p,i)=>`${i+1}. ${p.emoji} ${p.name} - RD$${p.price}`).join("<br>"):"Vacío"}
+function closeModal(){document.getElementById("modal").style.display="none"}
+function hint(t){document.getElementById("hint").textContent=t}
+function animate(){if(!gameStarted)return;requestAnimationFrame(animate);movePlayer();renderer.render(scene,camera)}
+document.addEventListener("keydown",e=>{const k=e.key.toLowerCase();if(k==="w"||e.key==="ArrowUp")keys.forward=true;if(k==="s"||e.key==="ArrowDown")keys.backward=true;if(k==="a"||e.key==="ArrowLeft")keys.left=true;if(k==="d"||e.key==="ArrowRight")keys.right=true;if(k==="q")keys.turnLeft=true;if(k==="e")keys.turnRight=true;if(e.key==="Enter")tryInteract()});
+document.addEventListener("keyup",e=>{const k=e.key.toLowerCase();if(k==="w"||e.key==="ArrowUp")keys.forward=false;if(k==="s"||e.key==="ArrowDown")keys.backward=false;if(k==="a"||e.key==="ArrowLeft")keys.left=false;if(k==="d"||e.key==="ArrowRight")keys.right=false;if(k==="q")keys.turnLeft=false;if(k==="e")keys.turnRight=false});
+window.addEventListener("resize",()=>{if(!camera||!renderer)return;camera.aspect=window.innerWidth/window.innerHeight;camera.updateProjectionMatrix();renderer.setSize(window.innerWidth,window.innerHeight)});
+</script>
 
 </body>
 </html>
+"""
+
+path = Path("/mnt/data/index.html")
+path.write_text(html, encoding="utf-8")
+print(path)
