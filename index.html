@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>THE SUPERMARKET 3D Alpha</title>
+<title>THE SUPERMARKET 3D Alpha Fixed</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
 body{overflow:hidden;background:#050505;color:white}
@@ -37,6 +37,10 @@ body{overflow:hidden;background:#050505;color:white}
   position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);
   width:18px;height:18px;border:2px solid rgba(255,255,255,.75);border-radius:50%;z-index:4;pointer-events:none
 }
+#errorBox{
+  display:none;position:fixed;inset:0;z-index:999;background:#020617;color:white;
+  align-items:center;justify-content:center;text-align:center;padding:25px
+}
 #modal{
   display:none;position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.75);
   align-items:center;justify-content:center;padding:20px
@@ -66,18 +70,23 @@ body{overflow:hidden;background:#050505;color:white}
   width:54px;height:54px;border:none;border-radius:15px;background:rgba(0,0,0,.68);
   color:white;font-size:22px;border:1px solid rgba(255,255,255,.12)
 }
-@media(min-width:800px){
-  #mobileControls,#lookControls{display:none}
-}
+@media(min-width:800px){#mobileControls,#lookControls{display:none}}
 </style>
 </head>
 <body>
 
+<div id="errorBox">
+  <div>
+    <h1>⚠️ No cargó Three.js</h1>
+    <p>Conéctate a internet o abre la página desde GitHub Pages.</p>
+  </div>
+</div>
+
 <div id="startScreen">
   <div class="startBox">
     <h1>THE SUPERMARKET</h1>
-    <p>Versión 3D Alpha 0.1</p>
-    <p>Camina dentro de un supermercado 3D real. Muévete con WASD o flechas. Mira con A/D o botones. Acércate a productos y presiona E.</p>
+    <p>Versión 3D Alpha 0.1 FIXED</p>
+    <p>Camina dentro de un supermercado 3D real. Muévete con WASD/flechas. Gira con Q/E. Acércate a productos y presiona Enter o el botón 🛒.</p>
     <button onclick="startGame()">ENTRAR</button>
   </div>
 </div>
@@ -89,7 +98,7 @@ body{overflow:hidden;background:#050505;color:white}
 </div>
 
 <div id="crosshair"></div>
-<div id="hint">WASD/Flechas para moverte · Q/E o botones para mirar · Acércate a productos</div>
+<div id="hint">Pulsa ENTRAR para comenzar</div>
 
 <div id="mobileControls">
   <div></div><button class="ctrl" ontouchstart="press('forward')" ontouchend="release('forward')">▲</button><div></div>
@@ -125,27 +134,32 @@ let total=0;
 let gameStarted=false;
 
 const productData=[
-  {name:"Manzana",price:35,emoji:"🍎",x:-8,z:5,color:0xef4444},
-  {name:"Banana",price:25,emoji:"🍌",x:-7,z:5,color:0xfacc15},
-  {name:"Agua",price:30,emoji:"💧",x:-2,z:5,color:0x38bdf8},
-  {name:"Jugo",price:75,emoji:"🧃",x:-1,z:5,color:0xfb923c},
+  {name:"Manzana",price:35,emoji:"🍎",x:-9,z:5,color:0xef4444},
+  {name:"Banana",price:25,emoji:"🍌",x:-8,z:5,color:0xfacc15},
+  {name:"Agua",price:30,emoji:"💧",x:-3,z:5,color:0x38bdf8},
+  {name:"Jugo",price:75,emoji:"🧃",x:-2,z:5,color:0xfb923c},
   {name:"Pan",price:60,emoji:"🍞",x:4,z:5,color:0xd97706},
   {name:"Café",price:180,emoji:"☕",x:5,z:5,color:0x78350f},
-  {name:"Leche",price:95,emoji:"🥛",x:-8,z:-2,color:0xffffff},
-  {name:"Queso",price:160,emoji:"🧀",x:-7,z:-2,color:0xfacc15},
-  {name:"Pollo",price:280,emoji:"🍗",x:-2,z:-2,color:0xf97316},
-  {name:"Carne",price:350,emoji:"🥩",x:-1,z:-2,color:0x991b1b},
+  {name:"Leche",price:95,emoji:"🥛",x:-9,z:-2,color:0xffffff},
+  {name:"Queso",price:160,emoji:"🧀",x:-8,z:-2,color:0xfacc15},
+  {name:"Pollo",price:280,emoji:"🍗",x:-3,z:-2,color:0xf97316},
+  {name:"Carne",price:350,emoji:"🥩",x:-2,z:-2,color:0x991b1b},
   {name:"Arroz",price:180,emoji:"🍚",x:4,z:-2,color:0xf8fafc},
   {name:"Aceite",price:240,emoji:"🛢️",x:5,z:-2,color:0xfbbf24},
-  {name:"Detergente",price:230,emoji:"🧴",x:-8,z:-9,color:0x60a5fa},
-  {name:"Papel",price:140,emoji:"🧻",x:-7,z:-9,color:0xffffff},
-  {name:"Chocolate",price:90,emoji:"🍫",x:-2,z:-9,color:0x5b250b},
-  {name:"Galletas",price:85,emoji:"🍪",x:-1,z:-9,color:0xb45309},
+  {name:"Detergente",price:230,emoji:"🧴",x:-9,z:-9,color:0x60a5fa},
+  {name:"Papel",price:140,emoji:"🧻",x:-8,z:-9,color:0xffffff},
+  {name:"Chocolate",price:90,emoji:"🍫",x:-3,z:-9,color:0x5b250b},
+  {name:"Galletas",price:85,emoji:"🍪",x:-2,z:-9,color:0xb45309},
   {name:"Helado",price:210,emoji:"🍦",x:4,z:-9,color:0xf9a8d4},
   {name:"Atún",price:95,emoji:"🥫",x:5,z:-9,color:0x94a3b8}
 ];
 
 function startGame(){
+  if(!window.THREE){
+    document.getElementById("startScreen").style.display="none";
+    document.getElementById("errorBox").style.display="flex";
+    return;
+  }
   document.getElementById("startScreen").style.display="none";
   gameStarted=true;
   init3D();
@@ -154,76 +168,68 @@ function startGame(){
 
 function init3D(){
   scene=new THREE.Scene();
-  scene.background=new THREE.Color(0x111827);
-  scene.fog=new THREE.Fog(0x111827,20,65);
+  scene.background=new THREE.Color(0x1e293b);
+  scene.fog=new THREE.Fog(0x1e293b,28,75);
 
   camera=new THREE.PerspectiveCamera(75,window.innerWidth/window.innerHeight,0.1,1000);
+
   renderer=new THREE.WebGLRenderer({antialias:true});
   renderer.setSize(window.innerWidth,window.innerHeight);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1,2));
   renderer.shadowMap.enabled=true;
+  renderer.setClearColor(0x1e293b,1);
   document.body.appendChild(renderer.domElement);
 
-  // Lights
-  const ambient=new THREE.AmbientLight(0xffffff,0.55);
+  const ambient=new THREE.AmbientLight(0xffffff,0.75);
   scene.add(ambient);
 
-  const sun=new THREE.DirectionalLight(0xffffff,1.2);
-  sun.position.set(12,22,10);
+  const sun=new THREE.DirectionalLight(0xffffff,1.25);
+  sun.position.set(10,20,15);
   sun.castShadow=true;
-  sun.shadow.mapSize.width=2048;
-  sun.shadow.mapSize.height=2048;
   scene.add(sun);
 
-  // Floor
-  const floorGeo=new THREE.PlaneGeometry(34,46);
-  const floorMat=new THREE.MeshStandardMaterial({color:0xd9d4c8,roughness:.65});
-  const floor=new THREE.Mesh(floorGeo,floorMat);
+  const floor=new THREE.Mesh(
+    new THREE.PlaneGeometry(36,48),
+    new THREE.MeshStandardMaterial({color:0xd9d4c8,roughness:.65})
+  );
   floor.rotation.x=-Math.PI/2;
   floor.receiveShadow=true;
   scene.add(floor);
 
-  // Tile grid
-  const grid=new THREE.GridHelper(46,46,0xffffff,0xb8b3a8);
-  grid.position.y=.015;
+  const grid=new THREE.GridHelper(48,48,0xffffff,0xb8b3a8);
+  grid.position.y=.02;
   scene.add(grid);
 
-  // Walls
-  makeWall(0,-23,34,.5,3);
-  makeWall(0,23,34,.5,3);
-  makeWall(-17,0,.5,46,3);
-  makeWall(17,0,.5,46,3);
+  makeWall(0,-23,36,.5,3);
+  makeWall(0,23,36,.5,3);
+  makeWall(-18,0,.5,48,3);
+  makeWall(18,0,.5,48,3);
 
-  // Entrance and checkout
   makeSign("🚪 ENTRADA",0,21.5,0x111827);
   makeCheckout(12,16);
 
-  // Shelves rows
-  makeShelf(-7,6,"🍎 FRUTAS / 🧃 BEBIDAS");
-  makeShelf(2,6,"🍞 PANADERÍA");
-  makeShelf(11,6,"🥩 CARNES");
+  makeShelf(-8,6,"FRUTAS / BEBIDAS");
+  makeShelf(0,6,"PANADERÍA");
+  makeShelf(8,6,"CARNES");
+  makeShelf(-8,-1,"LÁCTEOS");
+  makeShelf(0,-1,"BÁSICOS");
+  makeShelf(8,-1,"LIMPIEZA");
+  makeShelf(-8,-8,"SNACKS");
+  makeFridge(0,-8,"REFRIGERADOS");
+  makeShelf(8,-8,"ENLATADOS");
 
-  makeShelf(-7,-1,"🥛 LÁCTEOS");
-  makeShelf(2,-1,"🍚 BÁSICOS");
-  makeShelf(11,-1,"🧼 LIMPIEZA");
-
-  makeShelf(-7,-8,"🍫 SNACKS");
-  makeFridge(2,-8,"❄️ REFRIGERADOS");
-  makeShelf(11,-8,"🥫 ENLATADOS");
-
-  // Products
   productData.forEach(makeProduct);
-
-  // Avatar body visible from behind
   makeAvatar();
-
   updateCamera();
+
+  document.getElementById("hint").textContent="WASD/Flechas para moverte · Q/E para mirar · Acércate a productos";
 }
 
 function makeWall(x,z,w,d,h){
-  const geo=new THREE.BoxGeometry(w,h,d);
-  const mat=new THREE.MeshStandardMaterial({color:0x1f2937,roughness:.7});
-  const mesh=new THREE.Mesh(geo,mat);
+  const mesh=new THREE.Mesh(
+    new THREE.BoxGeometry(w,h,d),
+    new THREE.MeshStandardMaterial({color:0x111827,roughness:.7})
+  );
   mesh.position.set(x,h/2,z);
   mesh.castShadow=true;
   mesh.receiveShadow=true;
@@ -231,31 +237,26 @@ function makeWall(x,z,w,d,h){
 }
 
 function makeShelf(x,z,label){
-  const group=new THREE.Group();
-  group.position.set(x,0,z);
-
   const base=new THREE.Mesh(
-    new THREE.BoxGeometry(6,1.7,1.3),
+    new THREE.BoxGeometry(6,1.6,1.3),
     new THREE.MeshStandardMaterial({color:0x7c3f12,roughness:.55})
   );
-  base.position.y=.85;
+  base.position.set(x,.8,z);
   base.castShadow=true;
   base.receiveShadow=true;
-  group.add(base);
+  scene.add(base);
 
   const top=new THREE.Mesh(
     new THREE.BoxGeometry(6.2,.18,1.5),
     new THREE.MeshStandardMaterial({color:0x4a2508})
   );
-  top.position.y=1.78;
+  top.position.set(x,1.7,z);
   top.castShadow=true;
-  group.add(top);
+  scene.add(top);
 
   const text=createTextSprite(label);
-  text.position.set(0,2.35,0);
-  group.add(text);
-
-  scene.add(group);
+  text.position.set(x,2.4,z+.15);
+  scene.add(text);
 }
 
 function makeFridge(x,z,label){
@@ -276,7 +277,7 @@ function makeFridge(x,z,label){
   scene.add(glass);
 
   const text=createTextSprite(label);
-  text.position.set(x,3,z);
+  text.position.set(x,3,z+.2);
   scene.add(text);
 }
 
@@ -298,7 +299,7 @@ function makeCheckout(x,z){
   screen.castShadow=true;
   scene.add(screen);
 
-  makeSign("CAJA 🧾",x,z+1.5,0x111827);
+  makeSign("CAJA",x,z+1.8,0x111827);
 }
 
 function makeSign(text,x,z,color){
@@ -311,22 +312,23 @@ function makeSign(text,x,z,color){
   scene.add(sign);
 
   const sprite=createTextSprite(text);
-  sprite.position.set(x,2.85,z+.12);
+  sprite.position.set(x,2.85,z+.14);
   scene.add(sprite);
 }
 
 function makeProduct(p){
-  const geo=new THREE.BoxGeometry(.75,.75,.75);
-  const mat=new THREE.MeshStandardMaterial({color:p.color,roughness:.4});
-  const box=new THREE.Mesh(geo,mat);
+  const box=new THREE.Mesh(
+    new THREE.BoxGeometry(.75,.75,.75),
+    new THREE.MeshStandardMaterial({color:p.color,roughness:.4})
+  );
   box.position.set(p.x,.75,p.z);
   box.castShadow=true;
   box.receiveShadow=true;
   box.userData=p;
   scene.add(box);
 
-  const label=createTextSprite(p.emoji+" "+p.name+" RD$"+p.price);
-  label.position.set(p.x,1.55,p.z);
+  const label=createTextSprite(p.emoji+" "+p.name);
+  label.position.set(p.x,1.55,p.z+.2);
   scene.add(label);
 
   products.push(box);
@@ -338,10 +340,10 @@ function makeAvatar(){
   scene.add(group);
 
   const body=new THREE.Mesh(
-    new THREE.CapsuleGeometry(.28,.8,8,16),
+    new THREE.CylinderGeometry(.32,.42,.9,16),
     new THREE.MeshStandardMaterial({color:0x111827})
   );
-  body.position.y=.85;
+  body.position.y=.9;
   body.castShadow=true;
   group.add(body);
 
@@ -353,13 +355,25 @@ function makeAvatar(){
   head.castShadow=true;
   group.add(head);
 
-  const cart=new THREE.Mesh(
+  const leftLeg=new THREE.Mesh(
+    new THREE.BoxGeometry(.18,.55,.18),
+    new THREE.MeshStandardMaterial({color:0x2563eb})
+  );
+  leftLeg.position.set(-.15,.28,0);
+  leftLeg.castShadow=true;
+  group.add(leftLeg);
+
+  const rightLeg=leftLeg.clone();
+  rightLeg.position.x=.15;
+  group.add(rightLeg);
+
+  const cartMesh=new THREE.Mesh(
     new THREE.BoxGeometry(.9,.45,.75),
     new THREE.MeshStandardMaterial({color:0xcbd5e1,metalness:.25,roughness:.3})
   );
-  cart.position.set(.65,.35,-.15);
-  cart.castShadow=true;
-  group.add(cart);
+  cartMesh.position.set(.75,.35,-.15);
+  cartMesh.castShadow=true;
+  group.add(cartMesh);
 
   player.avatar=group;
 }
@@ -369,12 +383,10 @@ function createTextSprite(message){
   canvas.width=512;
   canvas.height=128;
   const ctx=canvas.getContext("2d");
-  ctx.clearRect(0,0,512,128);
   ctx.fillStyle="rgba(0,0,0,.72)";
-  ctx.roundRect ? ctx.roundRect(12,22,488,84,22) : ctx.fillRect(12,22,488,84);
-  ctx.fill();
+  ctx.fillRect(16,24,480,80);
   ctx.fillStyle="white";
-  ctx.font="bold 34px Arial";
+  ctx.font="bold 32px Arial";
   ctx.textAlign="center";
   ctx.textBaseline="middle";
   ctx.fillText(message,256,64);
@@ -386,22 +398,13 @@ function createTextSprite(message){
 }
 
 function updateCamera(){
-  const eyeHeight=1.7;
+  const eyeHeight=1.8;
   const behind=4.2;
-  const forwardX=Math.sin(player.rot);
-  const forwardZ=Math.cos(player.rot);
+  const fx=Math.sin(player.rot);
+  const fz=Math.cos(player.rot);
 
-  camera.position.set(
-    player.x - forwardX*behind,
-    eyeHeight+1.2,
-    player.z - forwardZ*behind
-  );
-
-  camera.lookAt(
-    player.x + forwardX*5,
-    eyeHeight,
-    player.z + forwardZ*5
-  );
+  camera.position.set(player.x-fx*behind,eyeHeight+1.1,player.z-fz*behind);
+  camera.lookAt(player.x+fx*5,eyeHeight,player.z+fz*5);
 
   if(player.avatar){
     player.avatar.position.set(player.x,0,player.z);
@@ -413,8 +416,8 @@ function movePlayer(){
   const speed=.12;
   const turn=.045;
 
-  if(keys.turnLeft || keys.q) player.rot+=turn;
-  if(keys.turnRight || keys.e) player.rot-=turn;
+  if(keys.turnLeft)player.rot+=turn;
+  if(keys.turnRight)player.rot-=turn;
 
   let dx=0,dz=0;
   const fx=Math.sin(player.rot);
@@ -430,8 +433,8 @@ function movePlayer(){
   player.x+=dx;
   player.z+=dz;
 
-  player.x=Math.max(-15.5,Math.min(15.5,player.x));
-  player.z=Math.max(-21.5,Math.min(21.5,player.z));
+  player.x=Math.max(-16,Math.min(16,player.x));
+  player.z=Math.max(-22,Math.min(22,player.z));
 
   updateCamera();
   detectNearby();
@@ -452,7 +455,7 @@ function detectNearby(){
   if(nearest){
     currentProduct=nearest.userData;
     document.getElementById("hint").textContent=
-      "Presiona E o 🛒 para agregar: "+currentProduct.emoji+" "+currentProduct.name+" RD$"+currentProduct.price;
+      "Producto cerca: "+currentProduct.emoji+" "+currentProduct.name+" RD$"+currentProduct.price+" · Enter o 🛒 para agregar";
   }else{
     currentProduct=null;
     document.getElementById("hint").textContent=
@@ -501,10 +504,8 @@ document.addEventListener("keydown",e=>{
   if(k==="a"||e.key==="ArrowLeft")keys.left=true;
   if(k==="d"||e.key==="ArrowRight")keys.right=true;
   if(k==="q")keys.turnLeft=true;
-  if(k==="e"){
-    if(currentProduct) tryInteract();
-    else keys.turnRight=true;
-  }
+  if(k==="e")keys.turnRight=true;
+  if(e.key==="Enter")tryInteract();
 });
 
 document.addEventListener("keyup",e=>{
